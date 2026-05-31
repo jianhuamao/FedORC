@@ -501,7 +501,7 @@ p_{\mathrm{proxy}}\|z_S^\epsilon
 where $\lambda_m$ absorbs the unknown scaling constant $c_H$.
 This surrogate is the observable part of the residualized proxy bound.
 The residual terms are not directly optimized by FedRAA; they characterize the approximation gap introduced by using proxy statistics.
-Accordingly, the theory should be interpreted as a conditional justification: when the proxy residuals are small(more details in appendix \textcolor{red}{~\ref{app:entropy_residual}--\ref{app:smoothing_residual}}), minimizing the entropy--KL surrogate controls the target-risk bound.
+Accordingly, the theory should be interpreted as a conditional justification: when the proxy residuals are small, minimizing the entropy--KL surrogate controls the target-risk bound. Additional discussion is provided in Appendix~\ref{app:entropy_residual}--\ref{app:smoothing_residual}.
 
 \section{Method}
 \label{sec:method}
@@ -835,40 +835,27 @@ The last strategy represents the oracle version of the reliability- and represen
 
 \paragraph{Results.}
 We first compute the theoretical upper bound derived in Theorem~\ref{thm:main_bound} for different admitted subsets. 
-As shown in Fig.~\ref{fig:theoretical_bound}, the FedRAA ideal subset achieves the lowest theoretical risk bound, since it simultaneously reduces the label-noise term and the distribution-mismatch term. 
+As shown in Fig.~\ref{fig:oracle_summary}, the FedRAA ideal subset achieves the lowest theoretical risk bound, since it simultaneously reduces the label-noise term and the distribution-mismatch term.
 In contrast, the balanced noisy strategy leads to the largest bound, indicating that distributional balance alone is insufficient when the admitted clients contain severe label noise.
 
 We further compare the empirical target risk with the corresponding theoretical upper bound during training. 
-As shown in Fig.~\ref{fig:risk_bound}, the FedRAA ideal subset achieves both the lowest target risk and the smallest gap between the empirical risk and the theoretical bound. 
+As shown in Fig.~\ref{fig:oracle_summary}, the FedRAA ideal subset achieves both the lowest target risk and the smallest gap between the empirical risk and the theoretical bound.
 This result supports the validity of our theoretical analysis: a subset with low label-noise risk and small distribution mismatch is more likely to yield better target performance. 
-Moreover, by comparing the clean-only skewed strategy with the balanced noisy strategy in Fig.~\ref{fig:theoretical_bound} and Fig.~\ref{fig:risk_bound}, we observe that label noise can be more harmful than label-prior skewness in this controlled setting. 
+Moreover, by comparing the clean-only skewed strategy with the balanced noisy strategy in Fig.~\ref{fig:oracle_summary}, we observe that label noise can be more harmful than label-prior skewness in this controlled setting.
 This observation further motivates the dynamic weighting mechanism in FedRAA, 
 where the contributions of reliability and representativeness are adjusted adaptively 
 based on the noise characteristics of the candidate client pool.
 
-\begin{figure}[t]
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=\linewidth]{figure/oracle/theoretical_bound.pdf}
-    \caption{Theoretical risk bound under different oracle admission strategies. 
-    The FedRAA ideal subset obtains the lowest bound by jointly reducing label-noise risk and distribution mismatch.}
-    \label{fig:theoretical_bound}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{figure/oracle/risk_bound.png}
-    \caption{Empirical target risk and theoretical upper bound under four admission strategies. 
-    $\mathcal{E}_T(h_t)$ denotes the target risk at round $t$, $B_1(S,h_t)$ denotes the theoretical upper bound, and the gap is defined as 
-    $B_1(S,h_t)-\mathcal{E}_T(h_t)$.}
-    \label{fig:risk_bound}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figure/oracle/acc.pdf}
-    \caption{Test accuracy curves of different oracle admission strategies.  }
-    \label{fig:oracle_acc}
-\end{figure}
+    \includegraphics[width=0.30\textwidth]{figure/oracle/theoretical_bound.pdf}
+    \hfill
+    \includegraphics[width=0.36\textwidth]{figure/oracle/risk_bound.png}
+    \hfill
+    \includegraphics[width=0.30\textwidth]{figure/oracle/acc.pdf}
+    \caption{Oracle validation of the admission principle. Left: theoretical risk bound under different admission strategies. Middle: empirical target risk and theoretical upper bound during training. Right: test accuracy curves under the same oracle strategies. The FedRAA ideal subset jointly reduces label-noise risk and distribution mismatch, resulting in the smallest bound and the best empirical performance.}
+    \label{fig:oracle_summary}
+\end{figure*}
 
 \subsection{Main experiments}
 \label{subsec:exp_setup}
@@ -888,6 +875,7 @@ For local training, we use Adam with learning rate $1\times10^{-4}$ and batch si
 \label{para:comp_nfl}
 We first compare FedRAA with noisy-label FL baselines under linear and Gaussian heterogeneous noise.
 Table~\ref{tab:noisy_fl_accuracy} reports the collected accuracy results on MedMNIST, CIFAR-10, and CIFAR-100.
+In this comparison, FedRAA uses its proposed variable-size admission rule and automatically determines the number of admitted clients before training.
 FedRAA remains competitive among the compared noisy-label FL baselines, obtaining the best result on CIFAR-10 under Gaussian noise and on both CIFAR-100 noise settings.
 On CIFAR-100, FedRAA substantially improves over All, FedCS, FedFixer, and FedDiv.
 The MedMNIST columns make the dataset-dependent nature of final accuracy explicit: FedGreed is strongest under linear noise, while LASA is strongest under Gaussian noise.
@@ -895,7 +883,7 @@ Therefore, the efficiency analysis below focuses on the cost required to reach m
 
 \begin{table*}[t]
 \centering
-\caption{Test accuracy (\%) of representative noisy-label FL methods under heterogeneous label noise. Results are collected at $\alpha=0.5$ with 50 clients and reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
+\caption{Test accuracy (\%) of representative noisy-label FL methods under heterogeneous label noise. Results are collected at $\alpha=0.5$ with 50 candidate clients and reported as mean$\pm$standard deviation. FedRAA uses the proposed automatic client-admission rule in this table. Best results are highlighted in bold and second-best results are underlined.}
 \label{tab:noisy_fl_accuracy}
 \setlength{\tabcolsep}{3.2pt}
 \renewcommand{\arraystretch}{1.15}
@@ -939,21 +927,21 @@ This supports the main design goal of FedRAA: it is not merely another accuracy-
 \label{tab:efficiency_linear}
 \setlength{\tabcolsep}{4.5pt}
 \renewcommand{\arraystretch}{1.12}
-\begin{tabular}{llccccc}
+\begin{tabular}{llcccc}
 \toprule
-\textbf{Scenario} & \textbf{Method} & \textbf{Target} & \textbf{Round} & \textbf{Comp.} & \textbf{Comm.} & \textbf{Saving} \\
+\textbf{Scenario} & \textbf{Method} & \textbf{Target} & \textbf{Comp.} & \textbf{Comm.} & \textbf{Saving} \\
 \midrule
-\multirow{2}{*}{CIFAR-10 Linear} & FedGreed~\cite{kritharakis2025fedgreed} & \multirow{2}{*}{50\%} & 8 & 8.49 & 33.33 & -- \\
-& FedRAA (ours) & & 21 & \textbf{3.08} & \textbf{11.17} & \textbf{63.7\% / 66.5\%} \\
+\multirow{2}{*}{CIFAR-10 Linear} & FedGreed~\cite{kritharakis2025fedgreed} & \multirow{2}{*}{50\%} & 8.49 & 33.33 & -- \\
+& FedRAA (ours) & & \textbf{3.08} & \textbf{11.17} & \textbf{63.7\% / 66.5\%} \\
 \midrule
-\multirow{2}{*}{CIFAR-10 Gaussian} & LASA~\cite{xu2025lasa} & \multirow{2}{*}{55\%} & 20 & 21.23 & 83.32 & -- \\
-& FedRAA (ours) & & 17 & \textbf{4.47} & \textbf{18.33} & \textbf{79.0\% / 78.0\%} \\
+\multirow{2}{*}{CIFAR-10 Gaussian} & LASA~\cite{xu2025lasa} & \multirow{2}{*}{55\%} & 21.23 & 83.32 & -- \\
+& FedRAA (ours) & & \textbf{4.47} & \textbf{18.33} & \textbf{79.0\% / 78.0\%} \\
 \midrule
-\multirow{2}{*}{MedMNIST Linear} & FedGreed~\cite{kritharakis2025fedgreed} & \multirow{2}{*}{80\%} & 5 & 1.17 & 20.83 & -- \\
-& FedRAA (ours) & & 7 & \textbf{1.04} & \textbf{14.66} & \textbf{11.1\% / 29.6\%} \\
+\multirow{2}{*}{MedMNIST Linear} & FedGreed~\cite{kritharakis2025fedgreed} & \multirow{2}{*}{80\%} & 1.17 & 20.83 & -- \\
+& FedRAA (ours) & & \textbf{1.04} & \textbf{14.66} & \textbf{11.1\% / 29.6\%} \\
 \midrule
-\multirow{2}{*}{MedMNIST Gaussian} & LASA~\cite{xu2025lasa} & \multirow{2}{*}{85\%} & 16 & 3.75 & 66.65 & -- \\
-& FedRAA (ours) & & 8 & \textbf{1.78} & \textbf{26.16} & \textbf{52.5\% / 60.8\%} \\
+\multirow{2}{*}{MedMNIST Gaussian} & LASA~\cite{xu2025lasa} & \multirow{2}{*}{85\%} & 3.75 & 66.65 & -- \\
+& FedRAA (ours) & & \textbf{1.78} & \textbf{26.16} & \textbf{52.5\% / 60.8\%} \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -991,7 +979,7 @@ FedRAA (ours) & \underline{21.67$\pm$0.27} & \textbf{28.73$\pm$0.72} & \underlin
 
 \paragraph{Comparison with client selection}
 \label{para:comp_cs}
-We compare FedRAA with multiple baselines under different label-noise levels to validate the effectiveness of the proposed method. For a fair comparison, all methods are evaluated under the same communication budget and client participation setting, where 20 out of 50 clients are selected to participate in federated training.
+We compare FedRAA with multiple baselines under different label-noise levels to validate the effectiveness of the proposed method. For a fair comparison with existing client-selection methods, Table~\ref{tab:selection_merged} fixes the participation budget for all methods, including FedRAA, so that 20 out of 50 clients are selected to participate in federated training. This differs from Table~\ref{tab:noisy_fl_accuracy}, where FedRAA uses its automatic variable-size admission rule.
 
 Figure~\ref{fig:triple_figures} illustrates the convergence behavior under the linear heterogeneous noise setting, while additional curves are provided in Appendix~\ref{app:more_curves}. Compared with the baselines, FedRAA exhibits faster convergence and more stable training dynamics, especially under high-noise conditions where other methods suffer from noticeable fluctuations or performance degradation. This indicates that FedRAA can effectively mitigate the adverse impact of noisy or biased clients during the optimization process.
 Table~\ref{tab:selection_merged} further reports the final test accuracy across all datasets and noise patterns. FedRAA consistently achieves the best or near-best performance in most settings, demonstrating that its advantage generalizes across different noise configurations rather than relying on a specific corruption pattern.
@@ -1000,7 +988,7 @@ Taken together, the convergence behavior and final performance jointly demonstra
 
 \begin{table*}[!t]
 \centering
-\caption{Test accuracy (\%) of client selection methods under three heterogeneous noise settings. Results are reported as mean$\pm$standard deviation over the converged stage. Best results are highlighted in bold, and second-best results are underlined.}
+\caption{Test accuracy (\%) of client selection methods under three heterogeneous noise settings. For fair client-selection comparison, all methods, including FedRAA, select a fixed budget of 20 clients. Results are reported as mean$\pm$standard deviation over the converged stage. Best results are highlighted in bold, and second-best results are underlined.}
 \label{tab:selection_merged}
 \setlength{\tabcolsep}{2.2pt}
 \renewcommand{\arraystretch}{1.10}
@@ -1105,13 +1093,13 @@ This confirms that FedRAA improves both reliability and representativeness at th
 & \textbf{Test Acc. (\%)} \\
 \midrule
 
-Random selection     & -- & -- & -- & 39.81 \\
-All clients          & -- & -- & -- & 39.67 \\
-Reliability only     & \checkmark & $\times$ & $\times$ & \underline{55.60} \\
-Represent. only      & $\times$ & \checkmark & $\times$ & 30.69 \\
-w/o adaptive calib.  & \checkmark & \checkmark & $\times$ & 53.22 \\
+Random selection     & -- & -- & -- & 39.81$\pm$0.32 \\
+All clients          & -- & -- & -- & 39.67$\pm$0.33 \\
+Reliability only     & \checkmark & $\times$ & $\times$ & \underline{55.60$\pm$0.30} \\
+Represent. only      & $\times$ & \checkmark & $\times$ & 30.69$\pm$0.52 \\
+w/o adaptive calib.  & \checkmark & \checkmark & $\times$ & 53.22$\pm$0.16 \\
 \midrule
-FedRAA               & \checkmark & \checkmark & \checkmark & \textbf{56.60} \\
+FedRAA               & \checkmark & \checkmark & \checkmark & \textbf{56.60$\pm$0.29} \\
 
 \bottomrule
 \end{tabular}
@@ -1125,6 +1113,15 @@ We ablate the two scoring terms and the adaptive calibration mechanism.
 Table~\ref{tab:ablation_fedraa} shows that reliability is the dominant factor under severe heterogeneous noise: using the reliability score alone improves accuracy from $39.81\%$ to $55.60\%$.
 Using the distribution score alone performs poorly, which indicates that distributional coverage cannot compensate for heavily corrupted local supervision.
 The full FedRAA model further improves over the non-adaptive variant by $3.38$ percentage points, confirming that the noise-adaptive calibration helps balance reliability and representativeness instead of relying on a fixed weighting rule.
+
+\section{Discussion}
+
+FedRAA relies on proxy-based evidence because the server cannot inspect clients' raw data under the privacy constraints of FL.
+This design makes the method practical for pre-training admission, but it also means that the quality of the proxy set affects the reliability of both admission signals.
+Predictive entropy should therefore be interpreted as a proxy for client-side predictive unreliability rather than as a direct estimator of the true label-noise rate.
+Similarly, the KL-based representativeness term measures alignment with the server-held proxy distribution, so a biased or outdated proxy set may shift the admitted pool toward the wrong target prior.
+In long-running deployments where client populations or target distributions evolve, the one-shot admission rule may also need to be combined with periodic proxy refresh or lightweight re-admission.
+These limitations do not change the main conclusion, but they clarify the conditions under which proactive client admission is most useful.
 
 \section{Conclusion}
 
@@ -1220,7 +1217,7 @@ $\mathcal{B}(S^+)-\mathcal{B}(S)>0$, which proves the claim.
 
 \section{Additional theoretical details}
 \label{app:theory_appendix}
-\subsection{Proof of lemma\ref{lem:noise_bridge}}
+\subsection{Proof of Lemma~\ref{lem:noise_bridge}}
 \begin{proof}
 For any distribution $P$ over $(X,Y)$, the risk of $h$ is defined as
 $\epsilon_P(h)=\mathbb E_{(X,Y)\sim P}[\ell(h(X),Y)]$.
@@ -1284,7 +1281,7 @@ Therefore,
 The first inequality follows from the triangle inequality, and the second follows from the bounded-loss assumption $0\le \ell\le 1$.
 \end{proof}
 
-\subsection{proof of lemma\ref{lem:label_shift_transfer}}
+\subsection{Proof of Lemma~\ref{lem:label_shift_transfer}}
 \begin{proof}
 By the standard variational characterization of total variation distance~\cite{gibbs2002choosing}, for any measurable function $f$ with $0\le f\le 1$,
 \[
@@ -1335,7 +1332,7 @@ Therefore,
 \frac{1}{2}\|\bar q_S-q_T\|_1.
 \]
 \end{proof}
-\subsection{proof of theorem\ref{thm:residualized_proxy_bound}}
+\subsection{Proof of Theorem~\ref{thm:residualized_proxy_bound}}
 \begin{proof}
 By Theorem~\ref{thm:main_bound},
 \begin{equation}
@@ -1389,7 +1386,7 @@ p_{\mathrm{proxy}}\|z_S^\epsilon
 \end{equation}
 Combining the above inequalities gives Eq.~\eqref{eq:residualized_proxy_bound}.
 \end{proof}
-\subsection{proof corollary\ref{cor:proxy_consistency_surrogate}}
+\subsection{Proof of Corollary~\ref{cor:proxy_consistency_surrogate}}
 \begin{proof}
 By Theorem~\ref{thm:residualized_proxy_bound},
 \begin{align}
