@@ -1877,6 +1877,8 @@ We use four heterogeneous noise modes. In \textit{linear noise}, client noise ra
 \label{app:more_curves}
 
 To avoid excessive repetition in the main text, we present only the CIFAR-10 result under linear heterogeneous real-imitation noise as the main illustration. This appendix further provides the complete convergence curves for the remaining datasets and noise settings, in order to supplement the evidence for the general effectiveness of FedRAA.
+Across all three datasets, the main pattern is consistent: FedRAA does not rely on a single favorable noise configuration, but remains stable when the same client-admission rule is applied to different label-noise schedules.
+The linear setting is the most diagnostic because it exposes the method to a wide range of client-level noise rates, whereas the 2-phase and 3-phase settings test whether the admitted subset remains robust when harmful clients are concentrated in a smaller portion of the candidate pool.
 \begin{figure*}[t]
     \centering
     \includegraphics[width=\textwidth]{figure/对比实验/cifar10.png}
@@ -1896,29 +1898,33 @@ To avoid excessive repetition in the main text, we present only the CIFAR-10 res
     \label{fig:appendix_tiny}
 \end{figure*}
 
-\begin{figure}[t]
-    \includegraphics[width=\linewidth]{figure/数据分布/线性加噪/cifar100.png}
-    \caption{Class-wise clean/noisy sample composition of selected client subsets on CIFAR-100 under linear heterogeneous noise.}
-    \label{fig:subset_composition_cifar100}
-\end{figure}
-\begin{figure}[t]
-    \includegraphics[width=\linewidth]{figure/数据分布/线性加噪/tinyimagenet.png}
-    \caption{Class-wise clean/noisy sample composition of selected client subsets on TinyImageNet under linear heterogeneous noise.}
-    \label{fig:subset_composition_tiny}
-\end{figure}
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.48\textwidth]{figure/数据分布/线性加噪/cifar100.png}
+    \hfill
+    \includegraphics[width=0.48\textwidth]{figure/数据分布/线性加噪/tinyimagenet.png}
+    \caption{Additional class-wise clean/noisy sample composition of selected client subsets on CIFAR-100 (left) and TinyImageNet (right) under linear heterogeneous noise. Positive bars denote clean samples, while negative bars denote noisy samples.}
+    \label{fig:subset_composition_appendix}
+\end{figure*}
 
 \section{Additional Client-Scale Experiment}
 \label{app:client_scale}
-\begin{figure}
+
+The client-scale experiment complements the fixed-budget comparisons in the main text.
+It evaluates whether performance changes monotonically with the number of admitted clients.
+The resulting curves show that overly small subsets can lose useful class coverage, while overly large subsets can reintroduce noisy or biased clients.
+This supports the variable-size admission design of FedRAA: the goal is not to maximize participation, but to find a participant pool that jointly preserves reliability and target-relevant coverage.
+
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=0.32\linewidth]{figure/screening.png}
+    \includegraphics[width=0.31\textwidth]{figure/screening.png}
     \hfill
-    \includegraphics[width=0.32\linewidth]{figure/nips/scale/cifar100.png}
+    \includegraphics[width=0.31\textwidth]{figure/nips/scale/cifar100.png}
     \hfill
-    \includegraphics[width=0.32\linewidth]{figure/nips/scale/tinyimagenet.png}
+    \includegraphics[width=0.31\textwidth]{figure/nips/scale/tinyimagenet.png}
     \caption{Effect of the selected client pool size on final test accuracy under coupled label noise and Non-IID heterogeneity on CIFAR-10, CIFAR-100, and TinyImageNet. Performance is non-monotonic with respect to the number of participating clients, showing that selecting an appropriate subset can outperform full participation.}
     \label{fig:screening}
-\end{figure}
+\end{figure*}
 
 \section{Additional Tables and Compatibility Results}
 \label{app:additional_results}
@@ -1927,6 +1933,10 @@ To avoid excessive repetition in the main text, we present only the CIFAR-10 res
 
 Table~\ref{tab:medmnist_noniid_appendix} reports the MedMNIST counterpart of the Non-IID robustness experiment under linear heterogeneous noise.
 The results show that the relative ranking is dataset dependent: FedRAA achieves the strongest accuracy at strong Non-IID, while FedGreed is strongest at moderate and weak Non-IID levels.
+This behavior is consistent with the role of the admission stage.
+When heterogeneity is strong, filtering noisy and target-mismatched clients can provide a clearer benefit because full participation mixes highly incompatible local objectives.
+When heterogeneity becomes weaker, the advantage shifts toward methods that exploit more participants during optimization.
+Therefore, the MedMNIST appendix result should be read together with the cost analysis in the main text: FedRAA is designed to provide a reliable and efficient participant pool, rather than to maximize final accuracy in every single dataset column.
 
 \begin{table}[t]
 \centering
@@ -1954,6 +1964,10 @@ FedRAA (ours) & \textbf{47.71$\pm$1.08} & \underline{81.05$\pm$0.80} & \underlin
 \end{table}
 
 \subsection{Compatibility with Co-teach+}
+
+Co-teach+ is applied during local training, while FedRAA acts before federated optimization by restricting the participant pool.
+The two mechanisms are therefore complementary: FedRAA reduces the amount of noisy supervision entering the global process, and Co-teach+ further suppresses noisy examples within the admitted clients.
+Table~\ref{tab:coteach_merged} shows that the combined variant improves the standalone methods in most settings, especially when the training-stage correction can operate on a cleaner and more representative admitted subset.
 
 \begin{table*}[t]
 \centering
@@ -1987,10 +2001,18 @@ FedRAA + Co-teach+
 & \underline{27.2} & \textbf{38.4} & \textbf{38.0} \\
 \bottomrule
 \end{tabular*}
+\vspace{2pt}
+\parbox{0.95\textwidth}{\footnotesize
+The improvement of FedRAA + Co-teach+ indicates that pre-training admission and training-stage sample filtering address different failure modes. FedRAA mainly removes unreliable clients from the participant pool, while Co-teach+ handles residual noisy labels among the admitted clients.}
 \end{table*}
 
 
 \subsection{Compatibility with Jo-CoR}
+
+We further test compatibility with Jo-CoR, another training-stage noisy-label learning method.
+The available Jo-CoR runs cover a smaller subset of settings, so this experiment is used as an auxiliary check rather than a full comparison.
+The result suggests that not every local correction method automatically improves after admission: Jo-CoR slightly improves CIFAR-100 linear noise when combined with FedRAA, but does not improve CIFAR-10 linear noise.
+This contrast emphasizes that FedRAA is a general admission layer, while the benefit of a specific training-stage correction depends on its interaction with the remaining local data distribution.
 \begin{table*}[t]
 \centering
 \caption{Compatibility with Jo-CoR under heterogeneous real-imitation noise. Results are mean accuracy (\%) over the converged stage. Best results in each column are highlighted in bold, and the second-best results are underlined.}
@@ -2023,6 +2045,9 @@ FedRAA + Jo-CoR
 & -- & -- & -- \\
 \bottomrule
 \end{tabular*}
+\vspace{2pt}
+\parbox{0.95\textwidth}{\footnotesize
+Dashes denote settings not included in this auxiliary compatibility check. Compared with Co-teach+, Jo-CoR shows a more mixed interaction with FedRAA, which suggests that the admission stage should be viewed as complementary to, but not a replacement for, carefully chosen training-stage noise correction.}
 \end{table*}
 
 \end{document}
