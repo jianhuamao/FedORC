@@ -1126,6 +1126,19 @@ Table~\ref{tab:ablation_fedraa} shows that reliability is the dominant factor un
 Using the distribution score alone performs poorly, which indicates that distributional coverage cannot compensate for heavily corrupted local supervision.
 The full FedRAA model further improves over the non-adaptive variant by $3.38$ percentage points, confirming that the noise-adaptive calibration helps balance reliability and representativeness instead of relying on a fixed weighting rule.
 
+\section{Conclusion}
+
+This paper studies robust federated learning from the perspective of pre-training client admission.
+Under coupled label noise and Non-IID heterogeneity, simply admitting more clients can introduce unreliable supervision and target-mismatched updates, while selecting only clean clients may sacrifice distributional coverage.
+To address this trade-off, we propose FedRAA, a reliability- and representativeness-aware admission framework that constructs a client subset before federated optimization begins.
+FedRAA estimates client reliability through proxy-set predictive entropy and measures subset-level representativeness through KL-based proxy distribution matching.
+Our theoretical analysis connects these two proxy signals to label-noise contamination and target-distribution mismatch in a unified target-risk view.
+
+Experiments across multiple datasets, noise patterns, and heterogeneity levels show that FedRAA selects lower-noise and more complementary client subsets, achieves competitive or superior robust accuracy, and reduces computation and communication cost at matched target accuracy.
+The ablation results further confirm that reliability scoring is essential under severe heterogeneous noise, while representativeness and adaptive calibration improve the balance between clean supervision and coverage.
+These findings suggest that robust FL should not only correct unreliable updates during training, but also proactively control the quality of the admitted participant pool.
+Future work will explore adaptive proxy construction, privacy-preserving proxy refinement, and admission strategies that can be updated over long-running federated deployments.
+
 \bibliographystyle{IEEEtran}
 \bibliography{FedPeD_refs}
 
