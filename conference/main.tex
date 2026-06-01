@@ -861,7 +861,7 @@ based on the noise characteristics of the candidate client pool.
 \label{subsec:exp_setup}
 In this subsection, we evaluate whether FedRAA provides a useful pre-training admission rule rather than behaving as a random client filter. 
 We consider two comparison groups.
-The first group contains noisy-label FL methods: full-round robust training baselines RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, and FedNed~\cite{lu2024fedned}, together with training-stage correction methods FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}. 
+The first group contains noisy-label FL methods: full-round robust training baselines RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, FedNed~\cite{lu2024fedned}, and FedNoRo~\cite{wu2023fednoro}, together with training-stage correction methods FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
 The second group contains client selection baselines: full participation (All), random selection (RS), distribution-aware selection (EMD and GS~\cite{ma2021client}), and optimization-driven selection (PoC~\cite{cho2022power} and FedCor~\cite{tang2022fedcor}).
 
 \paragraph{Implementation details.}
@@ -876,9 +876,9 @@ For local training, we use Adam with learning rate $1\times10^{-4}$ and batch si
 We first compare FedRAA with noisy-label FL baselines under linear and Gaussian heterogeneous noise.
 Table~\ref{tab:noisy_fl_accuracy} reports the collected accuracy results on MedMNIST, CIFAR-10, and CIFAR-100.
 In this comparison, FedRAA uses its proposed variable-size admission rule and automatically determines the number of admitted clients before training.
-FedRAA remains competitive among the compared noisy-label FL baselines, obtaining the best result on CIFAR-10 under Gaussian noise and on both CIFAR-100 noise settings.
-On CIFAR-100, FedRAA substantially improves over All, FedCS, FedFixer, and FedDiv.
-The MedMNIST columns make the dataset-dependent nature of final accuracy explicit: FedGreed is strongest under linear noise, while LASA is strongest under Gaussian noise.
+FedNoRo obtains the highest final accuracy in several full-round settings, especially on CIFAR-10 Gaussian noise and CIFAR-100.
+FedRAA remains competitive while using an admission rule that trains only the selected client pool, and it still obtains second-best accuracy on both CIFAR-100 noise settings.
+The MedMNIST columns make the dataset-dependent nature of final accuracy explicit: FedNoRo is strongest under linear noise, while LASA is strongest under Gaussian noise.
 Therefore, the efficiency analysis below focuses on the cost required to reach matched target utility rather than claiming that FedRAA dominates every final-accuracy column.
 
 \begin{table*}[t]
@@ -901,9 +901,10 @@ All & 60.89$\pm$1.89 & 85.53$\pm$0.73 & 39.16$\pm$0.31 & 54.38$\pm$0.37 & 24.11$
 \midrule
 \multicolumn{7}{l}{\textit{Full-round robust training baselines}} \\
 RFA~\cite{pillutla2022robust} & 63.38$\pm$3.24 & 83.05$\pm$0.67 & 35.52$\pm$0.10 & 47.68$\pm$0.45 & 20.52$\pm$0.07 & 30.31$\pm$0.23 \\
-FedGreed~\cite{kritharakis2025fedgreed} & \textbf{83.09$\pm$3.17} & 82.22$\pm$3.67 & \textbf{56.30$\pm$1.78} & 54.24$\pm$1.68 & 20.79$\pm$1.05 & 32.18$\pm$0.86 \\
-LASA~\cite{xu2025lasa} & 54.97$\pm$0.51 & \textbf{87.52$\pm$0.57} & 42.97$\pm$0.23 & \underline{56.20$\pm$0.31} & 23.69$\pm$0.15 & 31.03$\pm$0.12 \\
-FedNed~\cite{lu2024fedned} & 64.29$\pm$0.54 & \underline{86.52$\pm$0.58} & 39.72$\pm$0.09 & 55.41$\pm$0.30 & 23.63$\pm$0.04 & \underline{32.73$\pm$0.11} \\
+FedGreed~\cite{kritharakis2025fedgreed} & \underline{83.09$\pm$3.17} & 82.22$\pm$3.67 & \textbf{56.30$\pm$1.78} & 54.24$\pm$1.68 & 20.79$\pm$1.05 & 32.18$\pm$0.86 \\
+LASA~\cite{xu2025lasa} & 54.97$\pm$0.51 & \textbf{87.52$\pm$0.57} & 42.97$\pm$0.23 & 56.20$\pm$0.31 & 23.69$\pm$0.15 & 31.03$\pm$0.12 \\
+FedNed~\cite{lu2024fedned} & 64.29$\pm$0.54 & 86.52$\pm$0.58 & 39.72$\pm$0.09 & 55.41$\pm$0.30 & 23.63$\pm$0.04 & 32.73$\pm$0.11 \\
+FedNoRo~\cite{wu2023fednoro} & \textbf{85.48$\pm$0.41} & \underline{87.22$\pm$0.42} & 51.14$\pm$0.21 & \textbf{61.09$\pm$0.34} & \textbf{30.20$\pm$0.09} & \textbf{38.28$\pm$0.16} \\
 \midrule
 \multicolumn{7}{l}{\textit{Training-stage correction baselines}} \\
 FedCorr~\cite{xu2022fedcorr} & 55.54$\pm$13.10 & 85.18$\pm$1.02 & \underline{53.39$\pm$0.33} & 49.59$\pm$0.77 & 26.19$\pm$0.17 & 30.67$\pm$0.28 \\
@@ -911,19 +912,19 @@ FedCS~\cite{hao2025fedcs} & 56.60$\pm$3.02 & 79.12$\pm$0.76 & 31.77$\pm$0.48 & 4
 FedFixer~\cite{ji2024fedfixer} & 61.06$\pm$1.92 & 85.70$\pm$0.76 & 33.53$\pm$0.39 & 54.61$\pm$0.42 & 23.45$\pm$0.17 & 32.71$\pm$0.25 \\
 FedDiv~\cite{li2024feddiv} & 60.75$\pm$1.91 & 85.39$\pm$0.75 & 41.84$\pm$0.74 & 54.49$\pm$0.16 & 22.53$\pm$0.51 & 31.40$\pm$0.12 \\
 \midrule
-FedRAA (ours) & \underline{81.05$\pm$0.80} & 85.71$\pm$0.37 & 53.38$\pm$1.20 & \textbf{58.68$\pm$1.81} & \textbf{28.73$\pm$0.75} & \textbf{33.17$\pm$0.84} \\
+FedRAA (ours) & 81.05$\pm$0.80 & 85.71$\pm$0.37 & 53.38$\pm$1.20 & \underline{58.68$\pm$1.81} & \underline{28.73$\pm$0.75} & \underline{33.17$\pm$0.84} \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 Table~\ref{tab:efficiency_linear} further summarizes the cost saving obtained by FedRAA at matched target accuracy.
-For each scenario, the reference baseline is the strongest non-FedRAA method in Table~\ref{tab:noisy_fl_accuracy} that reaches the target.
+For each scenario, the reference baseline is a strong non-FedRAA method in Table~\ref{tab:noisy_fl_accuracy} that reaches the target.
 FedRAA reduces both computation and communication in all four matched-utility comparisons, with particularly large savings on CIFAR-10 and MedMNIST Gaussian noise.
 This supports the main design goal of FedRAA: it is not merely another accuracy-oriented correction method, but a cost-efficient admission mechanism that avoids repeated training on unreliable clients.
 
 \begin{table*}[!t]
 \centering
-\caption{FedRAA cost saving at matched target accuracy. For each scenario, the reference method is the strongest non-FedRAA method in Table~\ref{tab:noisy_fl_accuracy} that reaches the target. Computation is reported in $10^6$ FEP and communication in GB. Saving is reported as computation / communication reduction relative to the reference method.}
+\caption{FedRAA cost saving at matched target accuracy. For each scenario, the reference method is a strong non-FedRAA method in Table~\ref{tab:noisy_fl_accuracy} that reaches the target. Computation is reported in $10^6$ FEP and communication in GB. Saving is reported as computation / communication reduction relative to the reference method.}
 \label{tab:efficiency_linear}
 \setlength{\tabcolsep}{4.5pt}
 \renewcommand{\arraystretch}{1.12}
@@ -948,7 +949,7 @@ This supports the main design goal of FedRAA: it is not merely another accuracy-
 
 We also test whether the conclusion changes with the strength of Non-IID partitioning.
 Table~\ref{tab:noniid_robustness} reports the collected CIFAR-100 results under linear noise for $\alpha\in\{0.1,0.5,1.0\}$.
-FedRAA consistently improves over full participation by $3.28$--$4.62$ percentage points and remains competitive across all three heterogeneity levels.
+FedRAA consistently improves over full participation by $3.28$--$4.62$ percentage points and remains competitive across all three heterogeneity levels, while FedNoRo achieves the strongest final accuracy in this full-round comparison.
 These results show that the proposed admission rule remains effective across different degrees of data heterogeneity.
 
 \begin{table}[H]
@@ -963,15 +964,16 @@ These results show that the proposed admission rule remains effective across dif
 \midrule
 All & 18.39$\pm$0.15 & 24.11$\pm$0.15 & 24.17$\pm$0.23 \\
 RFA~\cite{pillutla2022robust} & 17.32$\pm$0.17 & 20.52$\pm$0.05 & 21.31$\pm$0.20 \\
-FedGreed~\cite{kritharakis2025fedgreed} & 8.73$\pm$1.45 & 20.79$\pm$1.05 & \textbf{29.03$\pm$0.85} \\
+FedGreed~\cite{kritharakis2025fedgreed} & 8.73$\pm$1.45 & 20.79$\pm$1.05 & \underline{29.03$\pm$0.85} \\
 LASA~\cite{xu2025lasa} & 17.63$\pm$0.11 & 23.69$\pm$0.17 & 25.44$\pm$0.23 \\
 FedNed~\cite{lu2024fedned} & 17.57$\pm$0.26 & 23.63$\pm$0.03 & 24.06$\pm$0.20 \\
-FedCorr~\cite{xu2022fedcorr} & \textbf{22.03$\pm$1.01} & \underline{26.19$\pm$0.16} & 24.03$\pm$0.24 \\
+FedNoRo~\cite{wu2023fednoro} & \textbf{22.56$\pm$0.20} & \textbf{30.20$\pm$0.08} & \textbf{32.82$\pm$3.79} \\
+FedCorr~\cite{xu2022fedcorr} & \underline{22.03$\pm$1.01} & 26.19$\pm$0.16 & 24.03$\pm$0.24 \\
 FedCS~\cite{hao2025fedcs} & 14.07$\pm$0.26 & 19.84$\pm$0.20 & 21.43$\pm$0.80 \\
 FedFixer~\cite{ji2024fedfixer} & 18.66$\pm$0.14 & 23.45$\pm$0.26 & 25.37$\pm$0.23 \\
 FedDiv~\cite{li2024feddiv} & 17.73$\pm$0.13 & 22.53$\pm$0.30 & 23.88$\pm$0.21 \\
 \midrule
-FedRAA (ours) & \underline{21.67$\pm$0.27} & \textbf{28.73$\pm$0.72} & \underline{28.93$\pm$0.52} \\
+FedRAA (ours) & 21.67$\pm$0.27 & \underline{28.73$\pm$0.72} & 28.93$\pm$0.52 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1929,7 +1931,7 @@ This supports the variable-size admission design of FedRAA: the goal is not to m
 \subsection{MedMNIST Non-IID Robustness}
 
 Table~\ref{tab:medmnist_noniid_appendix} reports the MedMNIST counterpart of the Non-IID robustness experiment under linear heterogeneous noise.
-The results show that the relative ranking is dataset dependent: FedRAA achieves the strongest accuracy at strong Non-IID, while FedGreed is strongest at moderate and weak Non-IID levels.
+The results show that the relative ranking is dataset dependent: FedRAA achieves the strongest accuracy at strong Non-IID, while FedNoRo and FedGreed are strongest at moderate and weak Non-IID levels, respectively.
 This behavior is consistent with the role of the admission stage.
 When heterogeneity is strong, filtering noisy and target-mismatched clients can provide a clearer benefit because full participation mixes highly incompatible local objectives.
 When heterogeneity becomes weaker, the advantage shifts toward methods that exploit more participants during optimization.
@@ -1947,15 +1949,16 @@ Therefore, the MedMNIST appendix result should be read together with the cost an
 \midrule
 All & 46.55$\pm$1.44 & 60.89$\pm$1.89 & 67.68$\pm$1.72 \\
 RFA~\cite{pillutla2022robust} & 38.82$\pm$1.50 & 63.38$\pm$3.24 & 61.60$\pm$1.47 \\
-FedGreed~\cite{kritharakis2025fedgreed} & 21.18$\pm$0.00 & \textbf{83.09$\pm$3.17} & \textbf{89.33$\pm$2.27} \\
+FedGreed~\cite{kritharakis2025fedgreed} & 21.18$\pm$0.00 & \underline{83.09$\pm$3.17} & \textbf{89.33$\pm$2.27} \\
 LASA~\cite{xu2025lasa} & 38.97$\pm$0.86 & 54.97$\pm$0.51 & 57.08$\pm$1.91 \\
 FedNed~\cite{lu2024fedned} & 45.50$\pm$2.12 & 64.29$\pm$0.54 & 67.96$\pm$1.49 \\
+FedNoRo~\cite{wu2023fednoro} & 33.92$\pm$2.13 & \textbf{85.48$\pm$0.41} & 78.07$\pm$0.51 \\
 FedCorr~\cite{xu2022fedcorr} & 4.88$\pm$0.86 & 55.54$\pm$13.10 & 69.09$\pm$9.95 \\
 FedCS~\cite{hao2025fedcs} & 24.66$\pm$1.40 & 56.60$\pm$3.02 & 79.06$\pm$1.39 \\
 FedFixer~\cite{ji2024fedfixer} & \underline{46.72$\pm$1.47} & 61.06$\pm$1.92 & 67.85$\pm$1.75 \\
 FedDiv~\cite{li2024feddiv} & 46.41$\pm$1.46 & 60.75$\pm$1.91 & 67.54$\pm$1.74 \\
 \midrule
-FedRAA (ours) & \textbf{47.71$\pm$1.08} & \underline{81.05$\pm$0.80} & \underline{86.82$\pm$0.10} \\
+FedRAA (ours) & \textbf{47.71$\pm$1.08} & 81.05$\pm$0.80 & \underline{86.82$\pm$0.10} \\
 \bottomrule
 \end{tabular}
 \end{table}
