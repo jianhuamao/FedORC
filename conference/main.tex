@@ -948,33 +948,33 @@ This supports the main design goal of FedRAA: it is not merely another accuracy-
 \end{table*}
 
 We also test whether the conclusion changes with the strength of Non-IID partitioning.
-Table~\ref{tab:noniid_robustness} reports the collected CIFAR-100 results under linear noise for $\alpha\in\{0.1,0.5,1.0\}$.
-FedRAA consistently improves over full participation by $3.28$--$4.62$ percentage points and remains competitive across all three heterogeneity levels, while FedNoRo achieves the strongest final accuracy in this full-round comparison.
-The corresponding CIFAR-10 and MedMNIST results are provided in Appendix~\ref{app:additional_results}.
+Table~\ref{tab:noniid_robustness} reports the collected CIFAR-10 results under linear noise for $\alpha\in\{0.1,0.5,1.0\}$.
+FedRAA improves over full participation by $4.05$--$14.22$ percentage points and achieves the strongest accuracy at $\alpha=0.1$ and $\alpha=1.0$, while FedGreed is strongest at $\alpha=0.5$.
+The corresponding CIFAR-100 and MedMNIST results are provided in Appendix~\ref{app:additional_results}.
 These results show that the proposed admission rule remains effective across different degrees of data heterogeneity.
 
 \begin{table}[H]
 \centering
-\caption{CIFAR-100 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
+\caption{CIFAR-10 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
 \label{tab:noniid_robustness}
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.12}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.10}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Method} & $\alpha=0.1$ & $\alpha=0.5$ & $\alpha=1.0$ \\
 \midrule
-All & 18.39$\pm$0.15 & 24.11$\pm$0.15 & 24.17$\pm$0.23 \\
-RFA~\cite{pillutla2022robust} & 17.32$\pm$0.17 & 20.52$\pm$0.05 & 21.31$\pm$0.20 \\
-FedGreed~\cite{kritharakis2025fedgreed} & 8.73$\pm$1.45 & 20.79$\pm$1.05 & \underline{29.03$\pm$0.85} \\
-LASA~\cite{xu2025lasa} & 17.63$\pm$0.11 & 23.69$\pm$0.17 & 25.44$\pm$0.23 \\
-FedNed~\cite{lu2024fedned} & 17.57$\pm$0.26 & 23.63$\pm$0.03 & 24.06$\pm$0.20 \\
-FedNoRo~\cite{wu2023fednoro} & \textbf{22.56$\pm$0.20} & \textbf{30.20$\pm$0.08} & \textbf{32.82$\pm$3.79} \\
-FedCorr~\cite{xu2022fedcorr} & \underline{22.03$\pm$1.01} & 26.19$\pm$0.16 & 24.03$\pm$0.24 \\
-FedCS~\cite{hao2025fedcs} & 14.07$\pm$0.26 & 19.84$\pm$0.20 & 21.43$\pm$0.80 \\
-FedFixer~\cite{ji2024fedfixer} & 18.66$\pm$0.14 & 23.45$\pm$0.26 & 25.37$\pm$0.23 \\
-FedDiv~\cite{li2024feddiv} & 17.73$\pm$0.13 & 22.53$\pm$0.30 & 23.88$\pm$0.21 \\
+All & 26.22$\pm$0.21 & 39.16$\pm$0.31 & 49.10$\pm$0.41 \\
+RFA~\cite{pillutla2022robust} & 23.88$\pm$0.34 & 35.52$\pm$0.10 & 40.95$\pm$0.28 \\
+FedGreed~\cite{kritharakis2025fedgreed} & 23.55$\pm$1.98 & \textbf{56.30$\pm$1.78} & 55.75$\pm$1.52 \\
+LASA~\cite{xu2025lasa} & 26.68$\pm$0.28 & 42.97$\pm$0.23 & 45.57$\pm$0.53 \\
+FedNed~\cite{lu2024fedned} & 26.01$\pm$0.36 & 39.72$\pm$0.09 & 49.75$\pm$0.32 \\
+FedNoRo~\cite{wu2023fednoro} & \underline{29.80$\pm$0.41} & 51.31$\pm$0.42 & \underline{56.53$\pm$0.20} \\
+FedCorr~\cite{xu2022fedcorr} & 25.29$\pm$1.43 & \underline{53.39$\pm$0.33} & 44.93$\pm$0.50 \\
+FedCS~\cite{hao2025fedcs} & 20.52$\pm$0.37 & 31.77$\pm$0.48 & 35.21$\pm$1.47 \\
+FedFixer~\cite{ji2024fedfixer} & 26.78$\pm$0.21 & 33.53$\pm$0.39 & 48.89$\pm$0.41 \\
+FedDiv~\cite{li2024feddiv} & 26.47$\pm$0.20 & 41.84$\pm$0.74 & 49.00$\pm$0.38 \\
 \midrule
-FedRAA (ours) & 21.67$\pm$0.27 & \underline{28.73$\pm$0.72} & 28.93$\pm$0.52 \\
+FedRAA (ours) & \textbf{30.27$\pm$0.75} & 53.38$\pm$1.20 & \textbf{57.48$\pm$1.07} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1929,35 +1929,35 @@ This supports the variable-size admission design of FedRAA: the goal is not to m
 \section{Additional Tables and Compatibility Results}
 \label{app:additional_results}
 
-\subsection{CIFAR-10 Non-IID Robustness}
+\subsection{CIFAR-100 Non-IID Robustness}
 
-Table~\ref{tab:cifar10_noniid_appendix} reports the CIFAR-10 counterpart of the Non-IID robustness experiment under linear heterogeneous noise.
-Compared with the CIFAR-100 results in the main text, CIFAR-10 shows a milder but still visible dependence on the partitioning strength.
-FedRAA achieves the strongest accuracy at $\alpha=0.1$ and $\alpha=1.0$, while FedGreed is strongest at $\alpha=0.5$.
-This result complements the main-table conclusion: the benefit of pre-training admission is not limited to the harder CIFAR-100 setting, but its relative ranking can change with the dataset and heterogeneity level.
+Table~\ref{tab:cifar100_noniid_appendix} reports the CIFAR-100 counterpart of the Non-IID robustness experiment under linear heterogeneous noise.
+Compared with the CIFAR-10 results in the main text, CIFAR-100 is more challenging and produces lower absolute accuracy.
+FedRAA consistently improves over full participation by $3.28$--$4.62$ percentage points and remains competitive across all three heterogeneity levels, while FedNoRo achieves the strongest final accuracy in this full-round comparison.
+This result complements the main-table conclusion: the benefit of pre-training admission is visible beyond CIFAR-10, but the relative ranking can change with the dataset difficulty and heterogeneity level.
 
 \begin{table}[t]
 \centering
-\caption{CIFAR-10 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
-\label{tab:cifar10_noniid_appendix}
-\setlength{\tabcolsep}{5pt}
-\renewcommand{\arraystretch}{1.10}
+\caption{CIFAR-100 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
+\label{tab:cifar100_noniid_appendix}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Method} & $\alpha=0.1$ & $\alpha=0.5$ & $\alpha=1.0$ \\
 \midrule
-All & 26.22$\pm$0.21 & 39.16$\pm$0.31 & 49.10$\pm$0.41 \\
-RFA~\cite{pillutla2022robust} & 23.88$\pm$0.34 & 35.52$\pm$0.10 & 40.95$\pm$0.28 \\
-FedGreed~\cite{kritharakis2025fedgreed} & 23.55$\pm$1.98 & \textbf{56.30$\pm$1.78} & 55.75$\pm$1.52 \\
-LASA~\cite{xu2025lasa} & 26.68$\pm$0.28 & 42.97$\pm$0.23 & 45.57$\pm$0.53 \\
-FedNed~\cite{lu2024fedned} & 26.01$\pm$0.36 & 39.72$\pm$0.09 & 49.75$\pm$0.32 \\
-FedNoRo~\cite{wu2023fednoro} & \underline{29.80$\pm$0.41} & 51.31$\pm$0.42 & \underline{56.53$\pm$0.20} \\
-FedCorr~\cite{xu2022fedcorr} & 25.29$\pm$1.43 & \underline{53.39$\pm$0.33} & 44.93$\pm$0.50 \\
-FedCS~\cite{hao2025fedcs} & 20.52$\pm$0.37 & 31.77$\pm$0.48 & 35.21$\pm$1.47 \\
-FedFixer~\cite{ji2024fedfixer} & 26.78$\pm$0.21 & 33.53$\pm$0.39 & 48.89$\pm$0.41 \\
-FedDiv~\cite{li2024feddiv} & 26.47$\pm$0.20 & 41.84$\pm$0.74 & 49.00$\pm$0.38 \\
+All & 18.39$\pm$0.15 & 24.11$\pm$0.15 & 24.17$\pm$0.23 \\
+RFA~\cite{pillutla2022robust} & 17.32$\pm$0.17 & 20.52$\pm$0.05 & 21.31$\pm$0.20 \\
+FedGreed~\cite{kritharakis2025fedgreed} & 8.73$\pm$1.45 & 20.79$\pm$1.05 & \underline{29.03$\pm$0.85} \\
+LASA~\cite{xu2025lasa} & 17.63$\pm$0.11 & 23.69$\pm$0.17 & 25.44$\pm$0.23 \\
+FedNed~\cite{lu2024fedned} & 17.57$\pm$0.26 & 23.63$\pm$0.03 & 24.06$\pm$0.20 \\
+FedNoRo~\cite{wu2023fednoro} & \textbf{22.56$\pm$0.20} & \textbf{30.20$\pm$0.08} & \textbf{32.82$\pm$3.79} \\
+FedCorr~\cite{xu2022fedcorr} & \underline{22.03$\pm$1.01} & 26.19$\pm$0.16 & 24.03$\pm$0.24 \\
+FedCS~\cite{hao2025fedcs} & 14.07$\pm$0.26 & 19.84$\pm$0.20 & 21.43$\pm$0.80 \\
+FedFixer~\cite{ji2024fedfixer} & 18.66$\pm$0.14 & 23.45$\pm$0.26 & 25.37$\pm$0.23 \\
+FedDiv~\cite{li2024feddiv} & 17.73$\pm$0.13 & 22.53$\pm$0.30 & 23.88$\pm$0.21 \\
 \midrule
-FedRAA (ours) & \textbf{30.27$\pm$0.75} & 53.38$\pm$1.20 & \textbf{57.48$\pm$1.07} \\
+FedRAA (ours) & 21.67$\pm$0.27 & \underline{28.73$\pm$0.72} & 28.93$\pm$0.52 \\
 \bottomrule
 \end{tabular}
 \end{table}
