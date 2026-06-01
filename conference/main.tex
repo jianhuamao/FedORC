@@ -835,29 +835,37 @@ The last strategy represents the oracle version of the reliability- and represen
 
 \paragraph{Results.}
 We first compute the theoretical upper bound derived in Theorem~\ref{thm:main_bound} for different admitted subsets. 
-As shown in Fig.~\ref{fig:oracle_summary}, the FedRAA ideal subset achieves the lowest theoretical risk bound, since it simultaneously reduces the label-noise term and the distribution-mismatch term.
+As shown in Fig.~\ref{fig:oracle_bound}, the FedRAA ideal subset achieves the lowest theoretical risk bound, since it simultaneously reduces the label-noise term and the distribution-mismatch term.
 In contrast, the balanced noisy strategy leads to the largest bound, indicating that distributional balance alone is insufficient when the admitted clients contain severe label noise.
 
 We further compare the empirical target risk with the corresponding theoretical upper bound during training. 
-As shown in Fig.~\ref{fig:oracle_summary}, the FedRAA ideal subset achieves both the lowest target risk and the smallest gap between the empirical risk and the theoretical bound.
+As shown in Fig.~\ref{fig:oracle_risk}, the FedRAA ideal subset achieves both the lowest target risk and the smallest gap between the empirical risk and the theoretical bound.
 This result supports the validity of our theoretical analysis: a subset with low label-noise risk and small distribution mismatch is more likely to yield better target performance. 
-Moreover, by comparing the clean-only skewed strategy with the balanced noisy strategy in Fig.~\ref{fig:oracle_summary}, we observe that label noise can be more harmful than label-prior skewness in this controlled setting.
+Moreover, by comparing the clean-only skewed strategy with the balanced noisy strategy in Figs.~\ref{fig:oracle_risk} and~\ref{fig:oracle_accuracy}, we observe that label noise can be more harmful than label-prior skewness in this controlled setting.
 This observation further motivates the dynamic weighting mechanism in FedRAA, 
 where the contributions of reliability and representativeness are adjusted adaptively 
 based on the noise characteristics of the candidate client pool.
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/theoretical_bound.pdf}
+    \caption{Theoretical risk bound under different oracle admission strategies.}
+    \label{fig:oracle_bound}
+\end{figure}
+
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=0.42\textwidth]{figure/oracle/theoretical_bound.pdf}
-    \hfill
-    \includegraphics[width=0.42\textwidth]{figure/oracle/acc.pdf}
-
-    \vspace{0.45em}
-
     \includegraphics[width=0.62\textwidth]{figure/oracle/risk_bound.png}
-    \caption{Oracle validation of the admission principle. Top-left: theoretical risk bound under different admission strategies. Top-right: test accuracy curves under the same oracle strategies. Bottom: empirical target risk and theoretical upper bound during training. The FedRAA ideal subset jointly reduces label-noise risk and distribution mismatch, resulting in the smallest bound and the best empirical performance.}
-    \label{fig:oracle_summary}
+    \caption{Empirical target risk and theoretical upper bound during oracle training.}
+    \label{fig:oracle_risk}
 \end{figure*}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/acc.pdf}
+    \caption{Test accuracy curves under the same oracle admission strategies.}
+    \label{fig:oracle_accuracy}
+\end{figure}
 
 \subsection{Main experiments}
 \label{subsec:exp_setup}
