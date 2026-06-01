@@ -848,12 +848,14 @@ based on the noise characteristics of the candidate client pool.
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[height=0.19\textwidth]{figure/oracle/theoretical_bound.pdf}
+    \includegraphics[width=0.42\textwidth]{figure/oracle/theoretical_bound.pdf}
     \hfill
-    \includegraphics[height=0.19\textwidth]{figure/oracle/risk_bound.png}
-    \hfill
-    \includegraphics[height=0.19\textwidth]{figure/oracle/acc.pdf}
-    \caption{Oracle validation of the admission principle. Left: theoretical risk bound under different admission strategies. Middle: empirical target risk and theoretical upper bound during training. Right: test accuracy curves under the same oracle strategies. The FedRAA ideal subset jointly reduces label-noise risk and distribution mismatch, resulting in the smallest bound and the best empirical performance.}
+    \includegraphics[width=0.42\textwidth]{figure/oracle/acc.pdf}
+
+    \vspace{0.45em}
+
+    \includegraphics[width=0.62\textwidth]{figure/oracle/risk_bound.png}
+    \caption{Oracle validation of the admission principle. Top-left: theoretical risk bound under different admission strategies. Top-right: test accuracy curves under the same oracle strategies. Bottom: empirical target risk and theoretical upper bound during training. The FedRAA ideal subset jointly reduces label-noise risk and distribution mismatch, resulting in the smallest bound and the best empirical performance.}
     \label{fig:oracle_summary}
 \end{figure*}
 
