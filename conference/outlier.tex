@@ -830,13 +830,6 @@ In high-uncertainty regimes, the retained set can shrink to avoid unreliable cli
 Algorithm~\ref{alg:FedOCR} summarizes the complete FedOCR procedure.
 
 
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=0.92\linewidth]{figure/oracle/theoretical_bound.pdf}
-	\caption{Theoretical risk bound under different oracle retention strategies.}
-	\label{fig:oracle_bound}
-\end{figure}
-
 \section{Experiments}
 \label{sec:experiment}
  
@@ -865,52 +858,9 @@ We evaluate FedOCR from five complementary perspectives:
 \subsection{Oracle Experiment}
 \label{subsec:oracle_exp}
 
-To provide a controlled validation of our theoretical analysis, we design a small-scale oracle experiment in which each client's clean label prior and label-noise rate are explicitly specified. 
-This experiment is not meant to benchmark practical methods; its role is to test whether the risk factors in Theorem~\ref{thm:main_bound} rank retained client-block sets in the expected order.
-
-\paragraph{Experimental Setup}
-We consider a three-class Gaussian classification problem with two-dimensional input features. 
-Each class shares the same covariance but has a different mean. 
-The target distribution is class-balanced, while the six candidate clients differ in both label prior and symmetric label-noise rate. 
-For each client, the true label is flipped uniformly to one of the other $K-1$ classes with probability $\rho$. 
-The detailed configuration is summarized in Table~\ref{tab:oracle_setup}.
-
-We compare four representative retention strategies:
-\begin{itemize}
-    \item \textbf{All clients}: all candidate clients are retained without outlier removal.
-    \item \textbf{Clean-only skewed}: reliability outliers are removed, but the retained low-noise clients are class-skewed.
-    \item \textbf{Balanced noisy}: distributional coverage is preserved, but noisy client blocks are still retained.
-    \item \textbf{FedOCR ideal}: clients that are both low-noise and distributionally complementary are retained.
-\end{itemize}
-The first strategy corresponds to no client-level outlier removal. 
-The next two strategies isolate the effects of distribution mismatch and label noise, respectively. 
-The last strategy is the oracle version of the reliability- and representativeness-aware admission rule advocated by FedOCR.
-
-\paragraph{Results}
-We first compute the theoretical upper bound from Theorem~\ref{thm:main_bound} for each retained subset. 
-As shown in Fig.~\ref{fig:oracle_bound}, the FedOCR ideal subset achieves the lowest bound because it reduces both the label-noise term and the distribution-mismatch term. 
-By contrast, the balanced noisy subset has the largest bound, showing that coverage alone cannot compensate for severe corruption.
-
-We then compare the empirical target risk with the bound during training. 
-As shown in Fig.~\ref{fig:oracle_risk}, the FedOCR ideal subset achieves the lowest target risk and the smallest bound gap. 
-This supports the main theoretical message: low noise and good coverage are both needed, and neither is sufficient on its own. 
-The comparison between the clean-only skewed and balanced noisy subsets further suggests that, in this toy setting, label noise is more damaging than mild prior skewness, which motivates FedOCR's adaptive balancing rule.
+The controlled oracle validation is moved to Appendix~\ref{app:oracle_experiment_details}; it is used only to check whether the risk factors in Theorem~\ref{thm:main_bound} rank retained client-block sets in the expected order.
 
 
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.92\linewidth]{figure/oracle/risk_bound.png}
-    \caption{Empirical target risk and theoretical upper bound during oracle training.}
-    \label{fig:oracle_risk}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.92\linewidth]{figure/oracle/acc.pdf}
-    \caption{Test accuracy curves under the same oracle retention strategies.}
-    \label{fig:oracle_accuracy}
-\end{figure}
 
 \begin{table*}[!t]
 	\centering
@@ -984,13 +934,7 @@ The comparison between the clean-only skewed and balanced noisy subsets further 
 \end{itemize}
 
 \paragraph{Implementation details.}
-We evaluate on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}.
-Unless otherwise specified, the training data are split over $N=50$ clients and $K=20$ clients participate in each federated training run.
-We use Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5 to simulate Non-IID data~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
-Label noise is applied symmetrically at the client level, following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}.
-The main experiments use linear and Gaussian heterogeneous noise.
-All methods are trained for $T=200$ global rounds under the same maximum round budget.
-For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, which keeps the pre-screening lightweight and consistent with the deployment-oriented design. For local training, we use Adam with learning rate $1\times10^{-4}$ and batch size 64.
+The full experimental setup, including dataset splits, noise construction, client counts, and optimization hyperparameters, is provided in Appendix~\ref{app:experiment_setup_details}.
 
 
 \paragraph{Comparison with baselines}
@@ -1934,6 +1878,10 @@ Therefore, the theoretical role of FedOCR is conditional rather than uncondition
 
 \section{Oracle Experiment Details}
 \label{app:oracle_experiment_details}
+This appendix records the controlled oracle validation that is summarized briefly in the main text.
+We consider a three-class Gaussian classification problem with two-dimensional features, class-balanced target prior, and six candidate clients that differ in both label prior and symmetric label-noise rate.
+The purpose of this experiment is not to benchmark practical methods, but to check whether the risk factors in Theorem~\ref{thm:main_bound} rank retained client-block sets in the expected order.
+The four retention strategies isolate the effects of no outlier removal, distribution mismatch, label noise, and the oracle FedOCR-style admission rule.
 \begin{table}[t]
 \centering
 \caption{Configuration of the oracle experiment. The six clients differ in both class-prior distribution and label-noise rate. Clients C1--C3 are low-noise but individually class-skewed, while their union provides a balanced class distribution.}
@@ -1964,8 +1912,45 @@ Target test set & 3000 clean samples with balanced class prior \\
 \end{tabular}
 \end{table}
 
+\paragraph{Oracle results.}
+The oracle figures below show the same qualitative pattern described in the main text.
+The FedOCR ideal subset achieves the lowest theoretical bound because it reduces both the label-noise term and the distribution-mismatch term, while the balanced noisy subset has the largest bound.
+The empirical target-risk curves further confirm that the FedOCR ideal subset attains the lowest target risk and the smallest bound gap.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/theoretical_bound.pdf}
+    \caption{Theoretical risk bound under different oracle retention strategies.}
+    \label{fig:oracle_bound}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/risk_bound.png}
+    \caption{Empirical target risk and theoretical upper bound during oracle training.}
+    \label{fig:oracle_risk}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/acc.pdf}
+    \caption{Test accuracy curves under the same oracle retention strategies.}
+    \label{fig:oracle_accuracy}
+\end{figure}
+
 \section{Experimental Setup Details}
 \label{app:experiment_setup_details}
+\subsection{Main experiment setup}
+\label{app:main_experiment_setup}
+We evaluate on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}.
+Unless otherwise specified, the training data are split over $N=50$ clients and $K=20$ clients participate in each federated training run.
+We use Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5 to simulate Non-IID data~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
+Label noise is applied symmetrically at the client level, following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}.
+The main experiments use linear and Gaussian heterogeneous noise.
+All methods are trained for $T=200$ global rounds under the same maximum round budget.
+For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, which keeps the pre-screening lightweight and consistent with the deployment-oriented design.
+For local training, we use Adam with learning rate $1\times10^{-4}$ and batch size 64.
+
 \subsection{Noise Modes}
 \label{app:noise_mode}
 We use two heterogeneous noise modes. In \textit{linear noise}, client noise rates are evenly spaced in $[0,1]$. In \textit{Gaussian noise}, rates are drawn from $\mathcal{N}(0.3, 0.15^2)$ and clipped to $[0,1]$. Label noise is applied symmetrically within each client.
