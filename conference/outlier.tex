@@ -81,18 +81,9 @@ Federated learning, client selection, label noise, Non-IID data, robust learning
 
 \section{Introduction}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figure/scale_exp/top50-intro.png}
-    \caption{\small Final test accuracy with different numbers of retained clients under noisy and Non-IID settings. 
-The result illustrates a non-monotonic trend: too few clients provide insufficient coverage, whereas too many clients introduce accumulated noise. 
-A balanced subset yields the best accuracy.}
-    \label{fig:top50-intro}
-\end{figure}
-
 \begin{figure*}[t]
-	\centering
-	\includegraphics[width=\textwidth]{figure/display_new.pdf}
+    \centering
+    \includegraphics[width=\textwidth]{figure/display_new.pdf}
 	\caption{Motivation and effect of FedOCR under heterogeneous noisy-label federated learning. 
 		FedOCR performs client-block-level outlier removal before training, retaining a low-risk and complementary participant pool that reduces corrupted updates and improves training efficiency.}
 	\label{fig:display}
@@ -109,7 +100,7 @@ Our key idea is to exclude high-risk client blocks once before formal federated 
 
 Based on this principle, we propose \textbf{FedOCR}, a reliability- and representativeness-aware framework for pre-training client-level outlier removal. FedOCR operationalizes two core questions: which clients are reliable enough to participate, and whether the retained clients still cover the target-relevant distribution. Specifically, each candidate client first performs a short local adaptation, after which the server evaluates the resulting client model on a server-held probing set. Predictive entropy on the probing set is used to estimate client-block reliability, while KL-based distribution matching evaluates whether the retained client set remains representative of the target-relevant distribution~\cite{northcutt2021confident,guo2017calibration,ben2010theory,lipton2018labelshift,hsu2019measuring,zhu2021survey,zhang2023dpp}.
 
-FedOCR then uses an adaptive greedy rule to integrate reliability and representativeness signals and construct the retained client set. Fig.~\ref{fig:top50-intro} illustrates why the retained set size should not be fixed blindly: retaining too few clients may lose target coverage, whereas retaining too many can reintroduce accumulated noise. Accordingly, FedOCR aims to retain a client set that contains sufficient clean data while preserving balanced class coverage. As shown in Fig.~\ref{fig:display}(b) and Fig.~\ref{fig:top50-intro}, such a low-noise and complementary client pool yields the best empirical performance.
+FedOCR then uses an adaptive greedy rule to integrate reliability and representativeness signals and construct the retained client set. The key point is that the best set size is not fixed blindly: retaining too few clients may lose target coverage, whereas retaining too many can reintroduce accumulated noise. Accordingly, FedOCR aims to retain a client set that contains sufficient clean data while preserving balanced class coverage. As shown in Fig.~\ref{fig:display}(b), such a low-noise and complementary client pool yields the best empirical performance.
 
 Since FedOCR operates before the main FL training stage, it can be flexibly stacked with downstream noisy-label FL methods. Rather than replacing sample-level correction, FedOCR improves the admitted client pool before optimization begins, allowing subsequent robust training methods to operate on a cleaner and more reliable set of clients. Our integration experiments confirm this benefit: combining FedOCR with training-stage methods, including FedCor~\cite{tang2022fedcor}, FedCorr~\cite{xu2022fedcorr}, and FedNoRo~\cite{wu2023fednoro}, improves both accuracy and efficiency compared with using each method alone. Therefore, when higher final accuracy is desired, FedOCR can be coupled with stronger training-stage noisy-label FL methods.
 
@@ -715,6 +706,13 @@ We evaluate the fixed-score variant and the adaptive variant separately in the a
 
 \subsection{Variable-Size Greedy Outlier-Removal Set Construction}
 \label{subsec:variable_greedy}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figure/scale_exp/top50-intro.png}
+    \caption{\small Final test accuracy under different retained-client budgets in noisy and Non-IID settings. The curve is non-monotonic: admitting too few clients leaves the retained pool under-covered, while admitting too many reintroduces accumulated noise. This motivates our greedy search for a high-scoring suboptimal retained set rather than a blindly maximal one.}
+    \label{fig:greedy_suboptimal}
+\end{figure}
 
 \begin{algorithm}[t]
 \caption{FedOCR: Fixed-Scale Noise-Adaptive Client-Block Outlier Removal}
@@ -2093,6 +2091,4 @@ Therefore, the MedMNIST appendix result should be read together with the cost an
 
 
 \end{document}
-
-
 
