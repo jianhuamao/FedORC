@@ -894,6 +894,15 @@ This means the theory is not just abstract: it ranks the oracle retained sets in
 \subsection{Main experiments}
 \label{subsec:exp_setup}
 In this section, we first present a controlled oracle experiment to validate our theoretical analysis. We then evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.	
+\paragraph{\textbf{Experimental setup}}
+We evaluate on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}.
+Unless otherwise specified, the training data are split over $N=50$ clients and $K=20$ clients participate in each federated training run.
+We use Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5 to simulate Non-IID data~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
+Label noise is applied symmetrically at the client level, following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}.
+The main experiments use linear and Gaussian heterogeneous noise.
+All methods are trained for $T=200$ global rounds under the same maximum round budget.
+For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, which keeps the pre-screening lightweight and consistent with the deployment-oriented design.
+For local training, we use Adam with learning rate $1\times10^{-4}$ and batch size 64.
 We compare against three baseline families:
 \begin{itemize}
 	\setlength{\itemsep}{0.1em}
@@ -903,7 +912,7 @@ We compare against three baseline families:
 	\item \textbf{Training-stage correction baselines:} FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
 	\item \textbf{Client-selection baselines:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
 \end{itemize}
-The full experimental setup, including dataset splits, noise construction, client counts, and optimization hyperparameters, is provided in Appendix~\ref{app:experiment_setup_details}.
+Additional implementation details are provided in Appendix~\ref{app:experiment_setup_details}.
 
 
 \paragraph{\textbf{Comparison with baselines}}
