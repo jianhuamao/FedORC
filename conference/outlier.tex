@@ -856,10 +856,10 @@ Unless otherwise stated, every standalone FedOCR entry in our tables and figures
 For comparison, the table also includes representative client-selection baselines under the same noise settings.
 The four FedOCR rows separate the direct effect of admission from its modular compatibility with downstream FL algorithms: the standalone row applies the proposed pre-training client-block outlier-removal rule and then runs standard FedAvg, while the other rows place the same rule before FedCor, FedCorr, or FedNoRo.
 
-The standalone FedOCR row consistently improves over full participation across all six dataset-noise settings.
-This indicates that the admission stage removes a substantial portion of harmful client blocks before they can repeatedly inject corrupted supervision or target-mismatched updates.
-The best combination still depends on the dataset and noise type: FedOCR + FedNoRo is strongest in four settings, FedOCR + FedCorr is best on CIFAR-10 linear noise, and FedOCR + FedCor is best on CIFAR-100 linear noise.
-Overall, the results support FedOCR as a modular admission step: it improves the quality of the participating pool and can strengthen different downstream FL methods, but the exact gain remains downstream- and corruption-dependent.
+The table itself makes the effect of admission easy to read: compared with full participation, standalone FedOCR improves all six dataset-noise settings, with the largest gains on MedMNIST linear noise ($60.89\%\!\rightarrow\!81.05\%$) and CIFAR-10 linear noise ($39.16\%\!\rightarrow\!56.60\%$), where harmful client blocks are most damaging.
+This means that the admission stage is already a strong denoising front-end before any downstream correction is applied.
+The four FedOCR rows also show its modularity more concretely: FedOCR+FedNoRo is best in four columns, namely MedMNIST linear ($\boldsymbol{86.19\pm0.41}$), MedMNIST Gaussian ($\boldsymbol{91.32\pm0.39}$), CIFAR-10 Gaussian ($\boldsymbol{67.89\pm0.35}$), and CIFAR-100 Gaussian ($\boldsymbol{35.49\pm0.13}$); FedOCR+FedCorr is best on CIFAR-10 linear ($\boldsymbol{57.01\pm0.84}$); and FedOCR+FedCor is best on CIFAR-100 linear ($\boldsymbol{30.94\pm0.23}$).
+Overall, Table~\ref{tab:noisy_fl_accuracy} shows that FedOCR is not only better than full participation on its own, but also a useful admission front-end that can be paired with different downstream FL methods to obtain the strongest result in a given noise regime.
 
 Table~\ref{tab:efficiency_linear} isolates the system-level picture at matched target accuracy.
 For each scenario, the reference baseline is a strong non-FedOCR method from Table~\ref{tab:noisy_fl_accuracy} that reaches the target.
