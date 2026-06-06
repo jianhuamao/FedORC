@@ -834,6 +834,15 @@ The clean-only skewed pool $(C1,C2)$ shows the opposite failure mode: removing t
 The balanced-noisy singleton $C4$ keeps class coverage but leaves the supervision too corrupted to support low risk.
 Using all clients sits between these extremes because it mixes noisy and mismatched clients in one pool.
 So the oracle plot does more than rank strategies; it confirms that the theoretical bound captures the same cleanliness-versus-coverage tension that drives the empirical target risk.
+The bound view tells the same story from another angle.
+Figure~\ref{fig:oracle_bound} shows that the FedOCR ideal strategy has the tightest bound, the noisy but balanced singleton has the loosest one, and the all-client pool again falls in between.
+This means the theory is not just abstract: it ranks the oracle retained sets in the same order as the measured target risk.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/theoretical_bound.pdf}
+    \caption{\normalfont Theoretical risk bound under different oracle retention strategies.}
+    \label{fig:oracle_bound}
+\end{figure}
 \begin{table*}[!t]
 	\centering
 	\caption{\normalfont Cost comparison at matched target accuracy. For each scenario, the reference method is selected as a representative strong baseline from the three baseline families considered in Table~\ref{tab:noisy_fl_accuracy}, including full-round robust training baselines, training-stage correction baselines, and client-selection baselines. Computation is reported in $10^6$ FEP and communication in GB. Saving denotes the computation / communication reduction of FedOCR-based methods relative to the corresponding reference method. Negative values indicate higher cost than the reference method. Best and second-best costs within each scenario are highlighted in bold and underlined, respectively.}
@@ -1830,13 +1839,6 @@ Target test set & 3000 clean samples with balanced class prior \\
 The oracle bound and target-risk figures below show the same qualitative pattern described in the main text.
 The FedOCR ideal subset achieves the lowest theoretical bound because it reduces both the label-noise term and the distribution-mismatch term, while the balanced noisy subset has the largest bound.
 The empirical target-risk curves further confirm that the FedOCR ideal subset attains the lowest target risk and the smallest bound gap.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.92\linewidth]{figure/oracle/theoretical_bound.pdf}
-    \caption{Theoretical risk bound under different oracle retention strategies.}
-    \label{fig:oracle_bound}
-\end{figure}
 
 \section{Experimental Setup Details}
 \label{app:experiment_setup_details}
