@@ -135,90 +135,48 @@ Most of these methods are round-wise schedulers: they ask which clients are usef
 FedOCR extends this client-level pruning view by jointly considering reliability and subset-level representativeness.
 Because the server cannot inspect raw data directly, these criteria are realized through privacy-compatible probing signals, namely probing-set predictive entropy and KL-based probing distribution matching.
 
-
 \section{Theoretical Analysis}
 \label{sec:theoretical_analysis}
 
-We study \emph{one-shot client-block outlier removal} before federated optimization starts.
-Our goal is to construct, using only client-level signals, a retained client-block set that approximates the ideal sample-level outlier-removal set (ORS) from centralized outlier-removal literature~\cite{natarajan2013noisy,patrini2017loss,han2018coteaching,northcutt2021confident,zhang2021nochange}.
-In FL, however, privacy and locality constraints prevent sample-wise intervention~\cite{kairouz2021advances}; the feasible decision unit is an entire client block, which gives rise to the block-constrained client-level outlier-removal set (BC-ORS).
-BC-ORS is therefore the practical FL objective: it is coarser than ORS and may be slightly suboptimal in accuracy, but it can be identified from client-level signals and admits a much more efficient search.
-This section provides a theoretical guarantee for that block-level design: we show that BC-ORS-style pre-training filtering is aligned with reducing the target-risk upper bound.
+We study \emph{pre-training outlier removal} for federated learning (FL) from a client-level perspective. 
+Our goal is to select a subset of training samples that minimizes the target risk, while respecting FL constraints that isolate samples into client-specific blocks.
+
 \subsection{Problem Setup}
 \label{subsec:problem_setup}
-
-Let $P_T$ denote the target test distribution.
-For any hypothesis $h\in\mathcal H$, its target risk is
+Let $P_T$ denote the target distribution, and $h\in\mathcal{H}$ any hypothesis with target risk
 \begin{equation}
-\label{eq:target_risk_def}
-\epsilon_T(h)
-=
-\mathbb E_{(x,y)\sim P_T}
-\left[
-\ell(h(x),y)
-\right].
+	\epsilon_T(h) = \mathbb{E}_{(x,y)\sim P_T}[\ell(h(x),y)].
 \end{equation}
-\begin{definition}[Sample-level outlier-removal set (ORS)]
-\label{def:sample_golden_set}
-Consider the centralized setting where all training samples are directly accessible.
-Let $D=\bigsqcup_{i=1}^{N}D_i$ denote the full training sample collection underlying the candidate pool, and let $h_{\mathcal G}$ denote the model trained on an arbitrary retained sample subset $\mathcal G\subseteq D$.
-The sample-level optimal retained set is
-\begin{equation}
-\label{eq:sample_level_optimum}
-\mathcal G^\star_{\mathrm{ORS}}
-\in
-\arg\min_{\emptyset\neq \mathcal G\subseteq D}
-\epsilon_T(h_{\mathcal G}).
-\end{equation}
-We call $\mathcal G^\star_{\mathrm{ORS}}$ the sample-level outlier-removal set (ORS).
-\end{definition}
-% \begin{assumption}[Full participation after outlier removal]
-% Given a candidate client pool $\mathcal{C}$, a retained subset 
-% $\mathcal{S}\subseteq\mathcal{C}$ is determined before federated training starts. 
-% During training, all clients in $\mathcal{S}$ participate in every communication round, and no round-wise client sampling or scheduling is performed.
-% \end{assumption}
-\begin{assumption}[Existence of risk-prone clients]
-\label{assump:risk_prone_clients}
-The candidate client pool $\mathcal{C}$ contains a non-empty subset of risk-prone clients 
-$\mathcal{C}_{\mathrm{risk}}\subset \mathcal{C}$. 
-Clients in $\mathcal{C}_{\mathrm{risk}}$ have persistent risks, such as severe label noise or distributional bias, which can repeatedly affect global aggregation once they are retained for training.
+\begin{assumption}[Existence of risk-prone data]
+	\label{assump:risk_prone_data}
+	The candidate training collection $D$ contains a non-empty subset of risk-prone samples
+	$D_{\mathrm{risk}}\subset D$.
+	Samples in $D_{\mathrm{risk}}$ may contain persistent risks, such as corrupted labels or target-mismatched examples, which can harm the target model if they are retained for training.
 \end{assumption}
+\begin{definition}[Sample-level outlier-removal set (ORS)]
+	\label{def:sample_golden_set}
+	In a centralized setting where all training samples $D$ are accessible, the optimal retained sample subset is
+	\begin{equation}
+		S_{\mathrm{ORS}} \in \arg\min_{\emptyset\neq 
+		S\subseteq D} \epsilon_T(h_S),
+	\end{equation}
+	where $h_S$ is trained on subset $S$. This defines the \emph{sample-level outlier-removal set}.
+\end{definition}
 
-\begin{definition}[Block-constrained client-level outlier-removal set (BC-ORS) in FL]
-\label{def:block_constrained_subset}
-Consider a federated system with $N$ candidate clients.
-The global training set is partitioned into client blocks,
-$D=\bigsqcup_{i=1}^{N}D_i$, where $D_i$ is the local dataset of client $i$.
-From our perspective, the server cannot freely select arbitrary samples from $D$ as in centralized noisy-label learning.
-Instead, privacy and locality constraints restrict feasible pre-training control to unions of client blocks~\cite{mcmahan2017communication,kairouz2021advances}:
-\[
-D_S=\bigsqcup_{i\in S}D_i,
-\qquad
-\emptyset\neq S\subseteq  \mathcal{C}.
-\]
-Let $h_S$ denote the global model trained using the data blocks indexed by $S$.
-The block-constrained optimal subset is
-\begin{equation}
-\label{eq:block_constrained_optimum}
-S^\star_{\mathrm{BC-ORS}}
-\in
-\arg\min_{\emptyset\neq S\subseteq \mathcal{C}}
-\epsilon_T(h_S).
-\end{equation}
-Here, $S^\star_{\mathrm{BC-ORS}}$ denotes the block-constrained client-level outlier-removal set (BC-ORS). 
-Unlike ORS, BC-ORS cannot excise only the noisy samples inside a client block, so it is generally a slightly coarser and accuracy-relaxed surrogate of the centralized sample-level optimum.
-Ideally, the candidate pool can be decomposed into the retained outlier-removal client set and the removed risk-prone clients, i.e.,
-\[
-\mathcal{C}=S^\star_{\mathrm{BC-ORS}}\cup\mathcal{C}_{\mathrm{risk}}.
-\]
-Our goal is to approximate the BC-ORS optimum in Eq.~\eqref{eq:block_constrained_optimum} through a computable pre-training client-level outlier-removal rule.
+\begin{definition}[Block-constrained ORS (BC-ORS) under FL]
+	\label{def:sample_block_constrained}
+	In FL, samples are partitioned into client blocks $D=\bigsqcup_{i=1}^N D_i$, $D_i$ donates private data on client $i$.
+	For a given subset of sample blocks $S^\star=\bigsqcup_{i=1}^M D_i$, and $M\subseteq\{1,\dots,N\}$, define the retained sample set The \emph{sample-block-constrained ORS} is
+	\begin{equation}
+		S^\star_{\mathrm{BC-ORS}} \in \arg\min_{\emptyset\neq S^\star \subseteq \{1,\dots,N\}} \epsilon_T(h_{S^\star}),
+	\end{equation}
+	where $h_{S^\star}$ is trained on the retained samples in $S^\star$. 
+	Compared to centralized ORS, the only constraint is that samples cannot be selected individually; instead, entire client blocks are retained or discarded.
 \end{definition}
 
 \begin{remark}[ORS versus BC-ORS]
 \label{rem:ORS_vs_BC-ORS}
-ORS is the sample-level oracle benchmark, because it can remove individual corrupted examples when raw data are directly accessible.
-BC-ORS is the FL-constrained counterpart, because it can only keep or discard whole client blocks and is therefore generally slightly suboptimal to ORS in target accuracy.
-We nevertheless prefer BC-ORS in FL because privacy and locality constraints rule out sample-level auditing, and because finding BC-ORS is orders of magnitude more efficient in communication and computation, as illustrated in Fig.~\ref{fig:display}(c) and Section~\ref{sec:experiment}.
+ORS is the sample-level oracle benchmark and BC-ORS is the FL-constrained counterpart. Therefore, BC-ORS is generally slightly suboptimal to ORS in target accuracy. We nevertheless prefer BC-ORS in FL because privacy and locality constraints rule out sample-level auditing, and because finding BC-ORS is orders of magnitude more efficient in communication and computation, as illustrated in Fig.~\ref{fig:display}(c) and Section~\ref{sec:experiment}.
 \end{remark}
 
 \subsection{A Unified Risk View of Client-Block Outlier Removal}
@@ -226,8 +184,7 @@ We nevertheless prefer BC-ORS in FL because privacy and locality constraints rul
 
 We now formalize why pre-training client-level outlier removal is justified.
 Since FL cannot realize sample-level ORS, the key question is whether a retained client-block set $S$ lowers the target-risk upper bound.
-Our analysis shows that two factors matter: unreliable clients can inject noisy supervision, and an imbalanced retained pool can drift away from the target distribution~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
-Both effects increase the target-risk upper bound, which yields the theoretical guarantee behind FedOCR: it seeks to remove unreliable clients while preserving enough representative ones, so the retained pool is a practical BC-ORS approximation rather than an unattainable ORS.
+In this section, our analysis shows that two factors matter: unreliable clients can inject noisy supervision, and an imbalanced retained pool can drift away from the target distribution~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
 
 \begin{assumption}[Bounded loss]
 \label{assump:bounded_loss}
@@ -356,11 +313,9 @@ The next subsection therefore turns the bound into an operational probing-consis
 \subsection{From Population Bound to probing Outlier-Removal Surrogates}
 \label{subsec:probing_theory}
 
-The bound in Theorem~\ref{thm:main_bound} lives at the population level, whereas FedOCR must operate with information that is observable before training.
-In particular, $\xi_{\mathrm{noise}}(S)$ depends on the discrepancy between clean and noisy label posteriors, while $\bar q_S$ and $q_T$ are clean population label priors.
-These quantities cannot be inspected by the server under the privacy and locality constraints of FL~\cite{kairouz2021advances}.
-FedOCR therefore instantiates the two risk factors through probing-set probing statistics.
-This step is not treated as an exact substitution.
+The bound in Theorem~\ref{thm:main_bound} lives at the population level, 
+but quantities in bound cannot be inspected by the server under the privacy and locality constraints of FL~\cite{kairouz2021advances}.
+FedOCR therefore instantiates the two risk factors through probing-set probing statistics.This step is not treated as an exact substitution.
 Instead, we formulate a residualized probing bound that separates the observable entropy--KL surrogate from the residual terms induced by probing mismatch.
 The resulting theory gives a conditional but explicit bridge: when the probing set is target-relevant and the short-adapted client models provide informative uncertainty and class-coverage signatures, optimizing the probing objective is aligned with reducing the population risk factors identified above.
 \begin{figure*}[t]
@@ -436,22 +391,25 @@ Here, $r_H$ measures the gap between the population noise-contamination term and
 \label{thm:residualized_probing_bound}
 Under Assumptions~\ref{assump:bounded_loss}--\ref{assump:label_only_noise}, for any selected subset $S$, any $h\in\mathcal H$, and any $c_H>0$,
 \begin{equation}
-\label{eq:residualized_probing_bound}
-\epsilon_T(h)
-\le
-\epsilon_S^n(h)
-+
-c_H\widehat{\xi}_{H}(S)
-+
-\sqrt{
-\frac12
-\mathrm{KL}
-\left(
-p_{\mathrm{prob}}\|z_S^\epsilon
-\right)
-}
-+
-R_{\mathrm{prob}}(S;c_H),
+	\label{eq:residualized_probing_bound}
+	\begin{aligned}
+		\epsilon_T(h)
+		\le\;&
+		\epsilon_S^n(h)
+		+
+		c_H\widehat{\xi}_{H}(S)
+		+
+		\sqrt{
+			\frac12
+			\mathrm{KL}
+			\left(
+			p_{\mathrm{prob}}\|z_S^\epsilon
+			\right)
+		}
+		\\
+		&+
+		R_{\mathrm{prob}}(S;c_H).
+	\end{aligned}
 \end{equation}
 where
 \begin{equation}
@@ -468,8 +426,7 @@ r_\epsilon(S).
 \end{equation}
 \end{theorem}
 
-Theorem~\ref{thm:residualized_probing_bound} does not assume that predictive entropy or probing-predicted signatures are universally accurate.
-Instead, it separates the observable part of the bound from the residual terms that quantify probing mismatch.
+Theorem~\ref{thm:residualized_probing_bound} separates the observable part of the bound from the residual terms that quantify probing mismatch.
 Thus, FedOCR optimizes the observable surrogate, while $R_{\mathrm{prob}}(S;c_H)$ captures the remaining gap between probing statistics and population quantities.
 
 \begin{corollary}[probing-consistency outlier-removal surrogate]
@@ -535,8 +492,6 @@ Only the first two components are directly tied to the probing objective, while 
 
 Before outlier removal, each candidate client starts from the current global model and performs a short local adaptation, producing a client model $f_i$.
 This adaptation is performed once before federated training, using a small fixed local budget $E_{\mathrm{adm}}$, and all candidate clients follow the same protocol.
-It introduces a one-time pre-screening cost, but avoids repeatedly auditing or repairing unreliable client blocks during later communication rounds, a cost-sensitive motivation shared with efficient client selection and noisy-client pruning~\cite{lai2021oort,fu2023client,morafah2024clipfl}.
-
 Let $p_i(c\mid x)$ denote the predictive probability of client model $f_i$ on probing input $x\in\mathcal D_{\mathrm{prob}}$.
 We define the average predictive entropy of client $i$ as
 \begin{equation}
@@ -552,7 +507,6 @@ For a $K$-class categorical distribution, the maximum entropy is $\log K$, achie
 We therefore normalize $H_i$ as $\widetilde H_i=H_i/\log K$, so that $\widetilde H_i\in[0,1]$ in theory.
 A value close to $1$ indicates near-uniform predictive uncertainty on the probing set, which we use as an observable probing for predictive unreliability.
 In implementation, $\widetilde H_i$ is clipped to $[0,1]$ only for numerical stability.
-
 The fixed-scale reliability score is
 \begin{equation}
 \label{eq:quality_score}
@@ -601,9 +555,9 @@ The resulting mixture $z_S$ should not be viewed as an exact estimate of the cli
 Instead, it measures which target-relevant classes are covered by the retained client models on the probing set, reflecting the role of label-prior and distribution mismatch in Non-IID generalization~\cite{lipton2018labelshift,hsu2019measuring,zhu2021survey}.
 
 For numerical stability, we apply $\epsilon$-smoothing before computing KL divergence:
-\[
-z_S^\epsilon=\frac{z_S+\epsilon\mathbf 1}{1+K\epsilon}.
-\]
+\begin{equation}
+	z_S^\epsilon=\frac{z_S+\epsilon\mathbf 1}{1+K\epsilon}.
+\end{equation}
 For a candidate client $k\notin S$, we measure the distribution mismatch after retaining $k$ by $d(k\mid S)=\mathrm{KL}(p_{\mathrm{prob}}\|z_{S\cup\{k\}}^\epsilon)$ and convert it into the distribution score
 \begin{equation}
 \label{eq:distribution_score}
@@ -845,15 +799,21 @@ We evaluate FedOCR from five complementary perspectives:
 \subsection{Oracle Experiment}
 \label{subsec:oracle_exp}
 
-The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and bound plots.
-Figure~\ref{fig:oracle_accuracy} shows that the oracle FedOCR-style retention strategy achieves the best accuracy among the four retention rules, consistent with the theoretical ranking.
+The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and the detailed bound analysis.
+Figure~\ref{fig:oracle_risk} compares the empirical target risk and the dynamic theoretical upper bound under four oracle retention strategies.
 
-\begin{figure}[t]
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=0.92\linewidth]{figure/oracle/acc.pdf}
-    \caption{Test accuracy curves under the oracle retention strategies.}
-    \label{fig:oracle_accuracy}
-\end{figure}
+    \includegraphics[width=\textwidth]{figure/oracle/risk_bound.png}
+    \caption{Empirical target risk and theoretical upper bound during oracle training.}
+    \label{fig:oracle_risk}
+\end{figure*}
+
+The FedOCR ideal strategy, which retains $C1$, $C2$, and $C3$, yields the steepest drop in both curves and finishes with the smallest empirical target risk ($0.0923$) and the tightest bound ($0.2311$), showing that a retained pool that is simultaneously cleaner and more representative gives the most favorable risk profile.
+By contrast, the clean-only skewed pool $(C1,C2)$ removes the noisiest client but sacrifices coverage; its final target risk remains higher ($0.3417$) even though the bound is moderately controlled ($0.5000$).
+The balanced-noisy singleton $C4$ preserves class coverage but is dominated by label noise, so both the empirical risk ($0.6560$) and the bound ($1.4033$) stay high throughout training.
+Using all clients produces an intermediate empirical risk ($0.1700$), but the bound remains much looser ($0.8178$) because the retained pool mixes noisy and distribution-mismatched clients.
+Overall, the figure shows that the oracle risk bound captures the relative quality of the retained client-block sets, and that the FedOCR-style choice best balances cleanliness and coverage.
 
 \begin{table*}[!t]
 	\centering
@@ -1909,13 +1869,6 @@ The empirical target-risk curves further confirm that the FedOCR ideal subset at
     \includegraphics[width=0.92\linewidth]{figure/oracle/theoretical_bound.pdf}
     \caption{Theoretical risk bound under different oracle retention strategies.}
     \label{fig:oracle_bound}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.92\linewidth]{figure/oracle/risk_bound.png}
-    \caption{Empirical target risk and theoretical upper bound during oracle training.}
-    \label{fig:oracle_risk}
 \end{figure}
 
 \section{Experimental Setup Details}
