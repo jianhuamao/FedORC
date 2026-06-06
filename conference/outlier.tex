@@ -143,7 +143,7 @@ We study \emph{one-shot client-block outlier removal} before federated optimizat
 Our goal is to construct, using only client-level signals, a retained client-block set that approximates the ideal sample-level outlier-removal set (ORS) from centralized outlier-removal literature~\cite{natarajan2013noisy,patrini2017loss,han2018coteaching,northcutt2021confident,zhang2021nochange}.
 In FL, however, privacy and locality constraints prevent sample-wise intervention~\cite{kairouz2021advances}; the feasible decision unit is an entire client block, which gives rise to the block-constrained client-level outlier-removal set (BC-ORS).
 BC-ORS is therefore the practical FL objective: it is coarser than ORS and may be slightly suboptimal in accuracy, but it can be identified from client-level signals and admits a much more efficient search.
-In this section, we provide a theoretical guarantee that BC-ORS-style pre-training filtering is aligned with reducing the target-risk upper bound.
+This section provides a theoretical guarantee for that block-level design: we show that BC-ORS-style pre-training filtering is aligned with reducing the target-risk upper bound.
 \subsection{Problem Setup}
 \label{subsec:problem_setup}
 
@@ -224,11 +224,10 @@ We nevertheless prefer BC-ORS in FL because privacy and locality constraints rul
 \subsection{A Unified Risk View of Client-Block Outlier Removal}
 \label{subsec:risk_view}
 
-We justify pre-training client-level outlier removal from a risk perspective.
-Because FL cannot realize sample-level ORS, the relevant question is whether a retained client-block set $S$ lowers the target-risk upper bound.
-Changing $S$ changes the training distribution induced by the selected local data blocks~\cite{hsu2019measuring,li2021silos,zhu2021survey}: some retained clients may inject noisy supervision, while others may shift the retained pool away from the target distribution.
-Our analysis shows that both effects increase the target-risk upper bound.
-This provides the theoretical guarantee behind FedOCR: it aims to remove unreliable clients while preserving enough representative ones, so that the retained pool is a practical BC-ORS approximation rather than an unattainable ORS.
+We now formalize why pre-training client-level outlier removal is justified.
+Since FL cannot realize sample-level ORS, the key question is whether a retained client-block set $S$ lowers the target-risk upper bound.
+Our analysis shows that two factors matter: unreliable clients can inject noisy supervision, and an imbalanced retained pool can drift away from the target distribution~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
+Both effects increase the target-risk upper bound, which yields the theoretical guarantee behind FedOCR: it seeks to remove unreliable clients while preserving enough representative ones, so the retained pool is a practical BC-ORS approximation rather than an unattainable ORS.
 
 \begin{assumption}[Bounded loss]
 \label{assump:bounded_loss}
