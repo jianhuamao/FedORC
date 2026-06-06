@@ -336,7 +336,7 @@ The resulting theory gives a conditional but explicit bridge: when the probing s
 First, we use predictive entropy as a lightweight probing objective for client-block reliability. 
 Figure~\ref{fig:entropy_illustration} illustrates the mechanism behind this probing.
 After short local adaptation, each client model is evaluated on the same probing inputs at the server, and the entropy of its predictive distribution summarizes how concentrated or uncertain its probing-set predictions are.
-A more formal bridge is given in Appendix~\ref{app:entropy_probing}, Proposition~\ref{prop:entropy_bridge_appendix}: under a standard symmetric label-noise transition model, and assuming the probing samples are sufficiently separable and the adapted client predictions are reasonably calibrated, the average predictive entropy is monotone increasing in the client noise rate up to a calibration- and separability-dependent relaxation.
+A more formal bridge is provided in the supplementary material: under a standard symmetric label-noise transition model, and assuming the probing samples are sufficiently separable and the adapted client predictions are reasonably calibrated, the average predictive entropy is monotone increasing in the client noise rate up to a calibration- and separability-dependent relaxation.
 This is consistent with classical noisy-label transition models~\cite{natarajan2013learning,patrini2017loss} and with confidence-based label diagnosis~\cite{northcutt2021confident,guo2017calibration}.
 Consistent with this mechanism, Figure~\ref{fig:entropy} shows that predictive entropy is positively correlated with the client-side label noise rate in our experimental settings. 
 Therefore, predictive entropy is used as an efficient probing-set reliability signal for identifying reliability outliers before training.
@@ -473,7 +473,7 @@ This surrogate is the observable part of the residualized probing bound.
 The residual terms are not directly optimized by FedOCR; they characterize the approximation gap introduced by using probing statistics.
 Accordingly, the theory provides a probing-consistency justification for FedOCR: the main risk bound specifies which population factors should be controlled, and the residualized bound states when the observable entropy--KL surrogate is aligned with those factors.
 When the probing residuals are small, minimizing the surrogate controls the target-risk bound up to the residual gap.
-Additional discussion of the residual terms is provided in Appendix~\ref{app:entropy_residual}--\ref{app:smoothing_residual}.
+Additional discussion of the residual terms is provided in the supplementary material.
 
 \section{Method}
 \label{sec:method}
@@ -825,7 +825,7 @@ The purpose of this experiment is not to benchmark practical methods, but to che
 The four retention strategies isolate the effects of no outlier removal, distribution mismatch, label noise, and the oracle FedOCR-style admission rule.
 \begin{table}[t]
 	\centering
-	\caption{Configuration of the oracle experiment. The six clients differ in both class-prior distribution and label-noise rate. Clients C1--C3 are low-noise but individually class-skewed, while their union provides a balanced class distribution.}
+    \caption{\normalfont Configuration of the oracle experiment. The six clients differ in both class-prior distribution and label-noise rate. Clients C1--C3 are low-noise but individually class-skewed, while their union provides a balanced class distribution.}
 	\label{tab:oracle_setup}
 	\setlength{\tabcolsep}{4pt}
 	\renewcommand{\arraystretch}{1.15}
@@ -1015,7 +1015,7 @@ FedOCR works best in the middle, which is what we want from an admission rule.
 For the strength coefficient, the best result is obtained at strength $=1$; smaller values keep too many risky clients, while larger values over-prune the pool.
 For the first-round epoch budget, 10 epochs give the most useful filtering indicators: too few epochs produce weak entropy estimates, while too many epochs make even risky clients look too confident on the probing set and shrink the gap between good and bad clients.
 For $\eta$, the default range $[0.10,0.30]$ selects 20 clients and achieves the best accuracy; smaller ranges keep too many noisy clients, while larger ranges are too strict.
-Additional client-pool-size curves are provided in Appendix Fig.~\ref{fig:screening}.
+Additional client-pool-size curves are provided in the supplementary material.
 
 \paragraph{\textbf{Probing-set sensitivity}}
 This table asks one question: how hard is it to build a probing set for FedOCR?
@@ -1848,8 +1848,8 @@ The purpose of this experiment is not to benchmark practical methods, but to che
 The four retention strategies isolate the effects of no outlier removal, distribution mismatch, label noise, and the oracle FedOCR-style admission rule.
 \begin{table}[t]
 \centering
-\caption{Configuration of the oracle experiment. The six clients differ in both class-prior distribution and label-noise rate. Clients C1--C3 are low-noise but individually class-skewed, while their union provides a balanced class distribution.}
-\label{tab:oracle_setup}
+\caption{\normalfont Configuration of the oracle experiment. The six clients differ in both class-prior distribution and label-noise rate. Clients C1--C3 are low-noise but individually class-skewed, while their union provides a balanced class distribution.}
+\label{tab:oracle_setup_appendix}
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{l|l}
