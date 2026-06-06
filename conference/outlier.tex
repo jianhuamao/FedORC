@@ -90,11 +90,11 @@ Federated learning, client selection, label noise, Non-IID data, robust learning
 \end{figure*}
 Federated learning (FL) preserves data privacy by keeping data decentralized, yet its practical adoption is hindered by substantial communication and computation overhead. Frequent transmission of large model updates and the limited computational capacity of edge devices are widely recognized as major barriers to real-world deployment~\cite{almanifi2023communication,wen2023survey,le2024practicality,jia2025comst,kairouz2021advances}. This challenge becomes particularly severe in scenarios with heterogeneous client data quality, where label noise and non-IID distributions coexist and often require additional auditing costs per round~\cite{hsu2019measuring,li2021silos,zhu2021survey,liang2023fednoisy}. Thus, a central question arises: how can FL maintain robust performance at low cost under such challenging conditions?
 
-To address robustness under noisy labels, numerous FL methods, commonly referred to as noisy-label FL, have been developed. These approaches typically operate at the sample level during training, using techniques such as sample reweighting, label correction, small-loss selection, confidence filtering, peer-model filtering, or local noise modeling to mitigate the impact of corrupted examples~\cite{natarajan2013learning,patrini2017loss,han2018coteaching,northcutt2021confident,tsouvalas2022labeling,xu2022fedcorr,wu2023fednoro,li2024feddiv,hao2025fedcs}. This design is well motivated: label noise occurs at the instance level, and directly handling suspicious samples provides the finest-grained control. From an outlier-processing perspective, these methods can be interpreted as sample-level outlier correction during training.
+To address robustness under noisy labels, numerous FL methods, commonly referred to as noisy-label FL, have been developed. These approaches typically operate at the sample level during training, using techniques such as sample reweighting, label correction or peer-model filtering to mitigate the impact of corrupted examples~\cite{natarajan2013learning,patrini2017loss,han2018coteaching,northcutt2021confident,tsouvalas2022labeling,xu2022fedcorr,wu2023fednoro,li2024feddiv,hao2025fedcs}. This design is well motivated: label noise occurs at the instance level, and directly handling suspicious samples provides the finest-grained control. From an outlier-processing perspective, these methods can be interpreted as sample-level outlier correction during training.
 
 However, fine-grained correction inevitably incurs non-negligible system costs. When certain clients are persistently noisy or strongly target-mismatched, admitting them in every round is inefficient: the system still spends communication and local computation on these risk-prone clients before their harmful samples are filtered, reweighted, or corrected~\cite{kairouz2021advances,xu2022fedcorr,hao2025fedcs}. FedENLC further makes this burden explicit, showing that label correction can require substantially more computation than standard training~\cite{cho2026fedenlc}. Therefore, sample-level processing alone cannot fully address the efficiency requirement of robust FL.
 
-To achieve both robustness and efficiency, we shift the outlier-removal unit from individual samples to client-side data blocks and perform outlier-client removal at the pre-training stage. This viewpoint is natural in FL: although noise occurs at the sample level, communication, local training, and aggregation are all organized at the client level. Leveraging the block-structured nature of federated data, client-level removal can be equivalently formulated as block-constrained client-level outlier removal (BC-ORS; see definition~\ref{def:block_constrained_subset}).
+To achieve both robustness and efficiency, we shift the outlier-removal unit from individual samples to client-side data blocks and perform \textbf{outlier-client removal at the pre-training stage}. This viewpoint is natural in FL: although noise occurs at the sample level, communication, local training, and aggregation are all organized at the client level. Leveraging the block-structured nature of federated data, client-level removal can be equivalently formulated as block-constrained client-level outlier removal (BC-ORS; see definition~\ref{def:block_constrained_subset}).
 
 Our key idea is to exclude high-risk client blocks once before formal federated optimization begins. Because this decision is made at a coarse granularity, it can reduce communication and computation costs throughout subsequent training rounds. Beyond cost savings, client-level outlier removal brings three additional advantages. First, it matches the operational granularity of FL, where the server can admit or reject clients but cannot directly manipulate private samples. Second, it is privacy-compatible, as it does not require the server to request or exchange additional sample-level information~\cite{kairouz2021advances}. Third, it provides robust pre-filtering: by removing risk-prone clients before training, the remaining client pool becomes more reliable, reducing the chance that downstream correction methods are biased by severely corrupted or target-mismatched updates~\cite{xu2022fedcorr,wu2023fednoro,ji2024fedfixer}.
 
@@ -707,13 +707,6 @@ We evaluate the fixed-score variant and the adaptive variant separately in the a
 \subsection{Variable-Size Greedy Outlier-Removal Set Construction}
 \label{subsec:variable_greedy}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{figure/scale_exp/top50-intro.png}
-    \caption{\small Final test accuracy under different retained-client budgets in noisy and Non-IID settings. The curve is non-monotonic: admitting too few clients leaves the retained pool under-covered, while admitting too many reintroduces accumulated noise. This motivates our greedy search for a high-scoring suboptimal retained set rather than a blindly maximal one.}
-    \label{fig:greedy_suboptimal}
-\end{figure}
-
 \begin{algorithm}[t]
 \caption{FedOCR: Fixed-Scale Noise-Adaptive Client-Block Outlier Removal}
 \label{alg:FedOCR}
@@ -747,12 +740,9 @@ We evaluate the fixed-score variant and the adaptive variant separately in the a
 \end{algorithmic}
 \end{algorithm}
 
-Many existing client selection methods assume a predefined per-round
-participation budget, such as a fixed fraction or a fixed number of clients
+Many existing client selection methods assume a predefined per-round participation budget, such as a fixed fraction or a fixed number of clients
 \cite{mcmahan2017communication, lai2021oort, cho2022power}.
-However, a fixed budget can be undesirable under heterogeneous noise.
-If the budget is too large, the server may be forced to retain unreliable client blocks; if it is too small, useful and target-complementary clients may be discarded.
-We therefore allow the final participant pool size to be determined by the outlier-removal sequence, and introduce a temperature coefficient to explicitly control the retained cardinality.
+FedOCR instead lets the final participant pool size be determined by the greedy outlier-removal sequence, and uses a temperature coefficient to regulate the retained cardinality.
 
 We use the full candidate pool $\mathcal V=[N]$.
 FedOCR then constructs a greedy sequence $S_1\subset S_2\subset\cdots\subset S_M$, where $M$ is the greedy horizon.
@@ -908,31 +898,25 @@ The controlled oracle validation is moved to Appendix~\ref{app:oracle_experiment
 
 \subsection{Main experiments}
 \label{subsec:exp_setup}
-\begin{itemize}
-\setlength{\itemsep}{0.15em}
-\setlength{\topsep}{0.2em}
-\setlength{\parsep}{0pt}
-	\item We evaluate FedOCR through five complementary questions:
+	We evaluate FedOCR from five aspects:
 	\begin{itemize}
-	\setlength{\itemsep}{0.1em}
-	\setlength{\topsep}{0.15em}
-	\setlength{\parsep}{0pt}
-		\item \textbf{Does client-block outlier removal improve robustness in harsh noisy and Non-IID settings?} We compare FedOCR with noisy-label FL methods and representative client-selection baselines.
-		\item \textbf{Can the standalone admission rule reach matched target utility with lower cost?} We analyze whether the pre-training client-block filter reaches the target with lower computation and communication cost.
-		\item \textbf{How does the retained pool change as heterogeneity varies?} We examine how the selected clients evolve as the data heterogeneity level changes.
-		\item \textbf{How sensitive is the admission stage to its own design choices?} We study the effect of hyperparameters and probing-set construction.
-		\item \textbf{Why does the method work?} We inspect the composition of the retained subsets and ablate the scoring terms.
-	\end{itemize}
-	\item We compare against two baseline groups:
+		\setlength{\itemsep}{0.1em}
+		\setlength{\topsep}{0.15em}
+		\setlength{\parsep}{0pt}
+		\item \textbf{Robustness:} comparison with noisy-label FL methods and client-selection baselines under severe noise and Non-IID heterogeneity.
+		\item \textbf{Efficiency:} computation and communication cost at matched target accuracy.
+		\item \textbf{Retained-pool behavior:} how the selected clients change with different heterogeneity levels.
+		\item \textbf{Sensitivity:} effects of admission hyperparameters and probing-set construction.
+		\item \textbf{Mechanism:} retained-subset analysis and ablation of the scoring terms.
+	\end{itemize}	
+	We compare against two groups of baselines:
 	\begin{itemize}
-	\setlength{\itemsep}{0.1em}
-	\setlength{\topsep}{0.15em}
-	\setlength{\parsep}{0pt}
-		\item \textbf{Noisy-label FL baselines.} Full-round robust training baselines RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, FedNed~\cite{lu2024fedned}, and FedNoRo~\cite{wu2023fednoro}, together with training-stage correction methods FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
-		\item \textbf{Client-selection baselines.} Full participation (All), random selection (RS), distribution-aware selection (EMD and GS~\cite{ma2021client}), and optimization-driven selection (PoC~\cite{cho2022power} and FedCor~\cite{tang2022fedcor}).
+		\setlength{\itemsep}{0.1em}
+		\setlength{\topsep}{0.15em}
+		\setlength{\parsep}{0pt}
+		\item \textbf{Noisy-label FL methods:} RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, FedNed~\cite{lu2024fedned}, FedNoRo~\cite{wu2023fednoro}, FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
+		\item \textbf{Client-selection methods:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
 	\end{itemize}
-\end{itemize}
-
 \paragraph{Implementation details.}
 The full experimental setup, including dataset splits, noise construction, client counts, and optimization hyperparameters, is provided in Appendix~\ref{app:experiment_setup_details}.
 
@@ -1038,12 +1022,12 @@ We study three key hyperparameters in the outlier-removal stage: the noise-adapt
 Figure~\ref{fig:hyperparameter_sensitivity} reports the sensitivity results on the CIFAR-10 linear-noise setting.
 The three sweeps show that FedOCR works best in a moderate filtering regime: overly conservative settings retain too many risky clients, while overly permissive settings shrink the pool and hurt accuracy.
 
-\begin{figure*}[t]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.85\textwidth]{figure/hyperparameter_sensitivity.png}
+    \includegraphics[width=\linewidth]{figure/hyperparameter_sensitivity.png}
     \caption{Hyperparameter sensitivity on CIFAR-10 under linear heterogeneous noise. Each panel reports the test accuracy and the number of retained clients when varying one outlier-removal-stage hyperparameter while keeping the others fixed.}
     \label{fig:hyperparameter_sensitivity}
-\end{figure*}
+\end{figure}
 
 For the strength coefficient, the best result is obtained at strength $=1$; smaller values keep too many risky clients, whereas larger values over-prune the pool and reduce accuracy.
 For the first-round epoch budget, 10 epochs give the most useful filtering indicators: too few epochs make the signal weak, while too many epochs make the admission step overly permissive.
@@ -1988,6 +1972,19 @@ The client-scale experiment complements the main robustness comparisons.
 It evaluates whether performance changes monotonically with the number of retained clients.
 The resulting curves show that overly small subsets can lose useful class coverage, while overly large subsets can reintroduce noisy or biased clients.
 This supports the variable-size outlier-removal design of FedOCR: the goal is not to maximize participation, but to find a retained participant pool that jointly preserves reliability and target-relevant coverage.
+
+\subsection{Greedy retained-budget validation}
+\label{app:greedy_budget_validation}
+The retained-budget curve below is the appendix version of the greedy-set validation that was summarized in the main text before moving the figure out of the introduction-style discussion.
+The curve is non-monotonic: retaining too few clients leaves the pool under-covered, while retaining too many reintroduces accumulated noise.
+This is why FedOCR searches for a high-scoring suboptimal retained set rather than maximizing participation blindly.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figure/scale_exp/top50-intro.png}
+    \caption{\small Final test accuracy under different retained-client budgets in noisy and Non-IID settings. The curve is non-monotonic: admitting too few clients leaves the retained pool under-covered, while admitting too many reintroduces accumulated noise. This motivates our greedy search for a high-scoring suboptimal retained set rather than a blindly maximal one.}
+    \label{fig:greedy_suboptimal}
+\end{figure}
 
 \begin{figure*}[t]
     \centering
