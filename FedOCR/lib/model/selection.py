@@ -3,7 +3,7 @@ from lib.model.EMD import compute_label_distribution, emd_client_selection,emd_c
 from lib.model.fedcor_selector import FedCorClientSelector
 from lib.model.server import Server
 from lib.utils import get_client_instance, get_current_exp_name, fedocr_client_selection, random_client_selection, PoC_client_selection, single_training_loop
-from lib.model.fedgap import FedOCRSelector
+from lib.model.fedocr import FedOCRSelector
 from torch.utils.data import DataLoader
 import numpy as np
 from scipy.stats import wasserstein_distance

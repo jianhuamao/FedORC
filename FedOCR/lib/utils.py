@@ -510,7 +510,7 @@ def single_training_loop(clients):
     return client_models_state_dicts, infos
 
 import copy
-from lib.model.fedgap import get_targets
+from lib.model.fedocr import get_targets
 import logging
 def move_params_to_cpu(weights_after_train):
     weight_on_cpu = {k: v.cpu() for k, v in weights_after_train.items()}
