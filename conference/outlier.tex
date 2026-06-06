@@ -816,7 +816,7 @@ Algorithm~\ref{alg:FedOCR} summarizes the complete FedOCR procedure.
 
 \section{Experiments}
 \label{sec:experiment}
-In this section, we first present a controlled oracle experiment to validate our theoretical analysis. We then evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.
+In this section, we first use a controlled oracle experiment to sanity-check the theoretical bound. We then ask whether FedOCR removes harmful client blocks early enough to improve robustness, reduce system cost, and reshape the retained pool in a way that matches the intuition behind the method.
 \subsection{Oracle Experiment}
 \label{subsec:oracle_exp}
 The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and the detailed bound analysis.
@@ -827,11 +827,12 @@ Figure~\ref{fig:oracle_risk} compares the empirical target risk and the dynamic 
 	\caption{Empirical target risk and theoretical upper bound during oracle training.}
 	\label{fig:oracle_risk}
 \end{figure}
-The FedOCR ideal strategy, which retains $C1$, $C2$, and $C3$, yields the steepest drop in both curves and finishes with the smallest empirical target risk ($0.0923$) and the tightest bound ($0.2311$), showing that a retained pool that is simultaneously cleaner and more representative gives the most favorable risk profile.
-By contrast, the clean-only skewed pool $(C1,C2)$ removes the noisiest client but sacrifices coverage; its final target risk remains higher ($0.3417$) even though the bound is moderately controlled ($0.5000$).
-The balanced-noisy singleton $C4$ preserves class coverage but is dominated by label noise, so both the empirical risk ($0.6560$) and the bound ($1.4033$) stay high throughout training.
-Using all clients produces an intermediate empirical risk ($0.1700$), but the bound remains much looser ($0.8178$) because the retained pool mixes noisy and distribution-mismatched clients.
-Overall, the figure shows that the oracle risk bound captures the relative quality of the retained client-block sets, and that the FedOCR-style choice best balances cleanliness and coverage.
+The most informative pattern is not that one strategy merely gets a lower final number, but that the bound tracks the same ordering as the empirical risk throughout training.
+The FedOCR ideal strategy, which retains $C1$, $C2$, and $C3$, drives both curves down fastest because it removes the noisiest client while still preserving the class coverage that the target task needs.
+The clean-only skewed pool $(C1,C2)$ shows the opposite failure mode: removing the worst noise source helps, but the retained pool is still too narrow, so the risk does not fall as far.
+The balanced-noisy singleton $C4$ keeps class coverage but leaves the supervision too corrupted to support low risk.
+Using all clients sits between these extremes because it mixes noisy and mismatched clients in one pool.
+So the oracle plot does more than rank strategies; it confirms that the theoretical bound captures the same cleanliness-versus-coverage tension that drives the empirical target risk.
 
 \subsection{Main experiments}
 \label{subsec:exp_setup}
@@ -856,21 +857,28 @@ Unless otherwise stated, every standalone FedOCR entry in our tables and figures
 For comparison, the table also includes representative client-selection baselines under the same noise settings.
 The four FedOCR rows separate the direct effect of admission from its modular compatibility with downstream FL algorithms: the standalone row applies the proposed pre-training client-block outlier-removal rule and then runs standard FedAvg, while the other rows place the same rule before FedCor, FedCorr, or FedNoRo.
 
-The table itself makes the effect of admission easy to read: compared with full participation, standalone FedOCR improves all six dataset-noise settings, with the largest gains on MedMNIST linear noise ($60.89\%\!\rightarrow\!81.05\%$) and CIFAR-10 linear noise ($39.16\%\!\rightarrow\!56.60\%$), where harmful client blocks are most damaging.
-This means that the admission stage is already a strong denoising front-end before any downstream correction is applied.
-The four FedOCR rows also show its modularity more concretely: FedOCR+FedNoRo is best in four columns, namely MedMNIST linear ($\boldsymbol{86.19\pm0.41}$), MedMNIST Gaussian ($\boldsymbol{91.32\pm0.39}$), CIFAR-10 Gaussian ($\boldsymbol{67.89\pm0.35}$), and CIFAR-100 Gaussian ($\boldsymbol{35.49\pm0.13}$); FedOCR+FedCorr is best on CIFAR-10 linear ($\boldsymbol{57.01\pm0.84}$); and FedOCR+FedCor is best on CIFAR-100 linear ($\boldsymbol{30.94\pm0.23}$).
-Overall, Table~\ref{tab:noisy_fl_accuracy} shows that FedOCR is not only better than full participation on its own, but also a useful admission front-end that can be paired with different downstream FL methods to obtain the strongest result in a given noise regime.
+The table shows that the main benefit of FedOCR is not a small refinement on top of existing methods, but an early removal of the client blocks that most distort optimization.
+Compared with full participation, standalone FedOCR improves all six dataset-noise settings, and the gain is largest on the linear regimes where client-level corruption is easiest to isolate before it spreads through training.
+That pattern is important: it says the admission stage is most valuable when the dominant failure mode is harmful participation itself rather than a residual sample-level error that only appears after a pool has already been selected.
+The combination rows add a second lesson. FedOCR is modular, but not uniformly additive: its value depends on whether the downstream method addresses the remaining corruption pattern.
+FedOCR+FedNoRo is strongest in the four columns where a robust full-round learner can best exploit the cleaner pool produced by admission, while FedOCR+FedCorr and FedOCR+FedCor win in the two linear cases where the downstream correction is better matched to the remaining corruption structure.
+So the table supports a cleaner conclusion than a raw leaderboard would suggest: admission gives the core robustness gain, and downstream correction is a regime-dependent refinement rather than the primary source of improvement.
 
 Table~\ref{tab:efficiency_linear} isolates the system-level picture at matched target accuracy.
 For each scenario, the reference baseline is a strong non-FedOCR method from Table~\ref{tab:noisy_fl_accuracy} that reaches the target.
-FedOCR alone reaches the target with the lowest cost in most scenarios, with especially large savings on CIFAR-10 linear noise and MedMNIST Gaussian noise.
-Attaching a downstream noisy-label method can improve accuracy, but the extra training stage may partly offset the savings and even increase the end-to-end cost in harder settings.
-This makes the practical message clear: the main system-level gain comes from screening out high-risk client blocks before training, while downstream correction remains an optional accuracy trade-off rather than a free cost reduction.
+The table makes a sharper point than a single accuracy comparison: admission is the place where most wasted work is eliminated.
+FedOCR alone reaches the target with the lowest cost in most scenarios because it removes high-risk clients before they consume communication and local epochs.
+When a downstream correction method is attached, the result is no longer purely about cost reduction; it becomes a trade-off between extra overhead and better recovery of the residual noise.
+That is why the combined variants sometimes improve the target cost and sometimes do not: the downstream stage helps only when its correction ability is strong enough to justify the additional rounds.
+So the table supports a system view of FedOCR, not just an accuracy view: the pre-training filter is the main lever for cutting cost, while downstream correction is a conditional refinement.
 
 We also test whether the conclusion changes with the strength of Non-IID partitioning.
 Table~\ref{tab:noniid_robustness} reports the CIFAR-10 results under linear noise for $\alpha\in\{0.1,0.5,1.0\}$.
-FedOCR improves over full participation by $4.05$--$14.22$ percentage points and achieves the strongest accuracy at $\alpha=0.1$ and $\alpha=1.0$, while FedGreed is strongest at $\alpha=0.5$.
-This shows that the admission rule remains effective across both highly skewed and moderately heterogeneous partitions, even though the best selector can still depend on the exact heterogeneity regime.
+The interesting trend here is not just that FedOCR stays competitive, but that its advantage is largest when heterogeneity becomes most hostile.
+As the partition becomes less extreme, all methods improve, but FedOCR remains near the top and wins at the two ends of the range, which suggests that its client-block filtering is especially useful when the learning problem is dominated by skew and corruption rather than by mild heterogeneity alone.
+FedGreed leading at the middle point is also informative: when the data are heterogeneous but not yet severely corrupted, utility-based selection can be enough to exploit diversity.
+FedOCR, in contrast, is designed for the harder regime where reliability filtering matters more than diversity alone.
+So the sweep says that FedOCR is not a narrow fix for one partition strength; it is most valuable when the partition is both noisy and skewed enough that cleaning the pool matters as much as choosing it.
 \begin{table*}[!t]
 	\centering
 	\caption{Cost comparison at matched target accuracy. For each scenario, the reference method is selected as a representative strong baseline from the three baseline families considered in Table~\ref{tab:noisy_fl_accuracy}, including full-round robust training baselines, training-stage correction baselines, and client-selection baselines. Computation is reported in $10^6$ FEP and communication in GB. Saving denotes the computation / communication reduction of FedOCR-based methods relative to the corresponding reference method. Negative values indicate higher cost than the reference method. Best and second-best costs within each scenario are highlighted in bold and underlined, respectively.}
@@ -947,7 +955,10 @@ FedOCR (ours) & $\boldsymbol{30.27\pm0.35}$ & $\boldsymbol{56.60\pm0.24}$ & $\bo
 \paragraph{\textbf{Hyperparameter sensitivity}}
 We study three key hyperparameters in the outlier-removal stage: the noise-adaptive strength, the first-round local epoch budget used to compute filtering indicators, and the threshold range $\eta$.
 Figure~\ref{fig:hyperparameter_sensitivity} reports the sensitivity results on the CIFAR-10 linear-noise setting.
-The three sweeps show that FedOCR works best in a moderate filtering regime: overly conservative settings retain too many risky clients, while overly permissive settings shrink the pool and hurt accuracy.
+The sweeps are most useful as a diagnosis of the admission mechanism itself.
+They show that FedOCR is governed by a real trade-off rather than a one-way preference for stronger filtering: too little pressure leaves noisy clients in the pool, while too much pressure prunes away useful coverage and hurts the downstream learner.
+The best region sits in the middle, which is exactly what we want from a practical admission rule: it should be selective enough to remove risk, but not so aggressive that it turns the retained set into a tiny or biased sample.
+So the figure is not just tuning advice; it shows that FedOCR behaves like a balanced selector instead of a brittle heuristic.
 
 \begin{figure}[t]
     \centering
@@ -965,13 +976,11 @@ Additional client-pool-size curves are provided in Appendix Fig.~\ref{fig:screen
 Beyond the admission hyperparameters, the probing set itself is another important design knob because its input samples determine the observable entropy and probing-predicted coverage signals used by FedOCR.
 Table~\ref{tab:probing_set_sensitivity} reports probing-set configurations on CIFAR-10~\cite{krizhevsky2009learning} under the same linear-noise setting used in the dedicated probe study (\emph{ResNet18}, $\alpha=0.5$, and $\eta\in[0.1,0.3]$).
 All runs use a fixed random seed, so identical rows mean that FedOCR selected the same client set and followed the same training trajectory rather than exhibiting a reporting artifact.
-The size sweep shows a clear cost-accuracy trade-off: a moderate 5\% probing set gives the best result, whereas larger probing sets add sample scans without further gain.
-The Dirichlet sweep shows that the probing input distribution matters because it changes the class-coverage signal seen by the admission stage.
-In contrast, the probing-label-noise sweep is exactly stable: under the same random seed, all probing label-noise rates produce the same retained client set and the same final accuracy.
-This is expected because FedOCR never uses the true probing labels.
-The probing set is used only through its inputs, which are fed to client models to compute predictive entropy and probing-predicted class signatures.
-Therefore, corrupting the unused labels does not change the selection scores, the selected clients, or the subsequent training trajectory.
-Table~\ref{tab:probing_set_sensitivity} therefore shows that FedOCR is sensitive to probe size and input distribution, but invariant to probing-set label noise when the probe inputs and random seed are fixed.
+The size sweep shows that the probing set behaves like a signal budget rather than a training set: if it is too small, the entropy and coverage estimates become noisy; if it is too large, the admission stage spends more scans without improving the ranking.
+The Dirichlet sweep tells a complementary story: what matters is not that the probe be perfectly IID, but that it exposes enough class support for the KL-based coverage signal to remain discriminative.
+The label-noise sweep is flat by design, because FedOCR never consumes the probing labels at all.
+That invariance is important: it confirms that the probe contributes through its inputs and class coverage only, so label corruption on the unused annotations cannot perturb the retained client set.
+Taken together, the table says that FedOCR is sensitive to the informative part of the probing set, but intentionally blind to the labels it does not use.
 \begin{table}[!t]
 	\centering
 	\caption{FedOCR probing-set sensitivity on CIFAR-10~\cite{krizhevsky2009learning} under linear heterogeneous noise. Results are reported as the last five rounds' mean$\pm$standard deviation, together with the final retained client count and the number of sample scans used by the admission stage.}
@@ -1015,9 +1024,10 @@ Table~\ref{tab:probing_set_sensitivity} therefore shows that FedOCR is sensitive
 
 To understand why FedOCR improves robustness, we analyze the clean/noisy class composition of the retained clients.
 Figure~\ref{fig:subset_composition_main} reports the class-wise composition of the outlier-removal client sets under linear heterogeneous noise.
-FedOCR retains a subset with more clean samples and fewer noisy samples across most classes, while still preserving balanced class coverage.
-In contrast, competing methods either keep more noisy samples or leave visible class gaps.
-This suggests that FedOCR improves the retained pool on both axes at once: it raises cleanliness without sacrificing the distributional coverage needed for stable training.
+The figure shows that FedOCR is not just pruning more aggressively; it is reshaping the retained pool.
+Compared with the alternatives, it keeps a client subset that is simultaneously cleaner and more class-complete, which matters because either property alone is not enough for stable federated optimization.
+Methods that chase reliability alone can leave coverage gaps, while methods that chase diversity alone can preserve noisy clients.
+FedOCR avoids both failure modes by balancing the two, so the retained pool is better prepared for downstream training before any learning step begins.
 
 \begin{figure}[t]
     \centering
@@ -1033,9 +1043,11 @@ This suggests that FedOCR improves the retained pool on both axes at once: it ra
 \label{subsec:ablation}
 
 We ablate the two scoring terms and the adaptive calibration mechanism.
-Table~\ref{tab:ablation_fedraa} shows that reliability is the dominant factor under severe heterogeneous noise: using the reliability score alone improves accuracy from $39.81\%$ to $54.60\%$.
-Using the distribution score alone performs poorly, which indicates that coverage by itself cannot compensate for heavily corrupted local supervision.
-The non-adaptive full model is already better than either single term, but the adaptive version adds another $3.38$ percentage points, showing that calibration is needed to reconcile reliability with representativeness rather than fixing their weights once and for all.
+Table~\ref{tab:ablation_fedraa} clarifies the role hierarchy inside FedOCR.
+Reliability filtering is the main driver, because once high-risk clients are removed the retained pool is much easier to optimize even without any representativeness term.
+Representativeness alone cannot rescue a noisy pool, which is why the distribution-only variant still performs poorly.
+The adaptive calibration then adds the final refinement by preventing the method from committing to a fixed reliability-versus-coverage balance across all regimes.
+So the ablation does not just show that every component helps; it shows that the components play different roles, with reliability as the gatekeeper, representativeness as the coverage safeguard, and calibration as the regime adapter.
 
 \begin{table}[h]
 	\centering
