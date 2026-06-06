@@ -95,7 +95,7 @@ To address robustness under noisy labels, numerous FL methods, commonly referred
 
 However, fine-grained correction inevitably incurs non-negligible system costs. When certain clients are persistently noisy or strongly target-mismatched, admitting them in every round is inefficient: the system still spends communication and local computation on these risk-prone clients before their harmful samples are filtered, reweighted, or corrected~\cite{kairouz2021advances,xu2022fedcorr,hao2025fedcs}. FedENLC further makes this burden explicit, showing that label correction can require substantially more computation than standard training~\cite{cho2026fedenlc}. Therefore, sample-level processing alone cannot fully address the efficiency requirement of robust FL.
 
-To achieve both robustness and efficiency, we shift the outlier-removal unit from individual samples to client-side data blocks and perform \textbf{outlier-client removal at the pre-training stage}. This viewpoint is natural in FL: although noise occurs at the sample level, communication, local training, and aggregation are all organized at the client level. Leveraging the block-structured nature of federated data, client-level removal can be equivalently formulated as block-constrained client-level outlier removal (BC-ORS; see definition~\ref{def:block_constrained_subset}).
+To achieve both robustness and efficiency, we shift the outlier-removal unit from individual samples to client-side data blocks and perform \textbf{outlier-client removal at the pre-training stage}. This viewpoint is natural in FL: although noise occurs at the sample level, communication, local training, and aggregation are all organized at the client level. Leveraging the block-structured nature of federated data, client-level removal can be equivalently formulated as block-constrained client-level outlier removal (BC-ORS; see definition~\ref{def:sample_block_constrained}).
 
 Our key idea is to exclude high-risk client blocks once before formal federated optimization begins. Because this decision is made at a coarse granularity, it can reduce communication and computation costs throughout subsequent training rounds. Beyond cost savings, client-level outlier removal brings three additional advantages. First, it matches the operational granularity of FL, where the server can admit or reject clients but cannot directly manipulate private samples. Second, it is privacy-compatible, as it does not require the server to request or exchange additional sample-level information~\cite{kairouz2021advances}. Third, it provides robust pre-filtering: by removing risk-prone clients before training, the remaining client pool becomes more reliable, reducing the chance that downstream correction methods are biased by severely corrupted or target-mismatched updates~\cite{xu2022fedcorr,wu2023fednoro,ji2024fedfixer}.
 
@@ -820,7 +820,38 @@ Algorithm~\ref{alg:FedOCR} summarizes the complete FedOCR procedure.
 In this section, we first use a controlled oracle experiment to check whether the theoretical bound matches empirical target risk. We then evaluate FedOCR on three benchmark datasets under heterogeneous label noise and Non-IID settings, and we examine its robustness, cost, probing-set sensitivity, retained-pool composition, and ablation behavior.
 \subsection{Oracle Experiment}
 \label{subsec:oracle_exp}
-The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and the detailed bound analysis.
+We consider a three-class Gaussian classification problem with two-dimensional features, class-balanced target prior, and six candidate clients that differ in both label prior and symmetric label-noise rate(shown in table\ref{tab:oracle_setup}).
+The purpose of this experiment is not to benchmark practical methods, but to check whether the risk factors in Theorem~\ref{thm:main_bound} rank retained client-block sets in the expected order.
+The four retention strategies isolate the effects of no outlier removal, distribution mismatch, label noise, and the oracle FedOCR-style admission rule.
+\begin{table}[t]
+	\centering
+	\caption{Configuration of the oracle experiment. The six clients differ in both class-prior distribution and label-noise rate. Clients C1--C3 are low-noise but individually class-skewed, while their union provides a balanced class distribution.}
+	\label{tab:oracle_setup}
+	\setlength{\tabcolsep}{4pt}
+	\renewcommand{\arraystretch}{1.15}
+	\begin{tabular}{l|l}
+		\toprule
+		\textbf{Item} & \textbf{Setting} \\
+		\midrule
+		Task type & Three-class non-IID classification \\
+		Feature dimension & 2 \\
+		Input distribution & Gaussian class-conditionals \\
+		Class means & $\mu_1=(-2,0),\ \mu_2=(2,0),\ \mu_3=(0,2)$ \\
+		Covariance & $\sigma=0.9$ \\
+		Target prior & $q_T=(1/3,1/3,1/3)$ \\
+		Label noise & Symmetric noise with rate $\rho$ \\
+		Noise mechanism & Flip to other $K-1$ classes uniformly \\
+		Model & Two-layer MLP, $2 \rightarrow 16 \rightarrow 3$ \\
+		Activation & ReLU \\
+		Optimizer & Full-batch gradient descent \\
+		Learning rate & $0.01$ \\
+		Training epochs & 400 epochs, including epoch 0 initialization \\
+		Initialization & $\mathcal{N}(0,0.01)$ with fixed random seed \\
+		Samples per client & 300 \\
+		Target test set & 3000 clean samples with balanced class prior \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 Figure~\ref{fig:oracle_risk} compares the empirical target risk and the dynamic theoretical upper bound under four oracle retention strategies.
 \begin{figure}[t]
 	\centering
@@ -855,38 +886,38 @@ This means the theory is not just abstract: it ranks the oracle retained sets in
 		\midrule
 		\multirow{3}{*}{MedMNIST Linear} 
 		& FedNoRo & \multirow{3}{*}{80\%} & 2.62 & 41.66 & -- \\
-		& FedOCR (ours) & & \underline{1.04} & \textbf{14.66} & \underline{60.3\%} / \textbf{64.8\%} \\
-		& FedOCR (ours) + FedNoRo & & \textbf{0.84} & \underline{18.50} & \textbf{67.9\%} / \underline{55.6\%} \\
+		& FedOCR (ours) & & \underline{1.04} & $\boldsymbol{14.66}$ & \underline{60.3\%} / $\boldsymbol{64.8\%}$ \\
+		& FedOCR (ours) + FedNoRo & & $\boldsymbol{0.84}$ & \underline{18.50} & $\boldsymbol{67.9\%}$ / \underline{55.6\%} \\
 		\midrule
 		
 		\multirow{3}{*}{MedMNIST Gaussian} 
 		& FedNoRo & \multirow{3}{*}{85\%} & 3.21 & 54.16 & -- \\
-		& FedOCR (ours) & & \textbf{1.78} & \textbf{26.16} & \textbf{44.5\%} / \textbf{51.7\%} \\
+		& FedOCR (ours) & & $\boldsymbol{1.78}$ & $\boldsymbol{26.16}$ & $\boldsymbol{44.5\%}$ / $\boldsymbol{51.7\%}$ \\
 		& FedOCR (ours) + FedNoRo & & \underline{2.15} & \underline{35.49} & \underline{33.0\%} / \underline{34.5\%} \\
 		\midrule
 		
 		\multirow{3}{*}{CIFAR-10 Linear} 
 		& FedCorr & \multirow{3}{*}{50\%} & 13.16 & 49.16 & -- \\
-		& FedOCR (ours) & & \textbf{3.08} & \textbf{11.17} & \textbf{76.6\%} / \textbf{77.3\%} \\
+		& FedOCR (ours) & & $\boldsymbol{3.08}$ & $\boldsymbol{11.17}$ & $\boldsymbol{76.6\%}$ / $\boldsymbol{77.3\%}$ \\
 		& FedOCR (ours) + FedCor & & \underline{3.72} & \underline{20.75} & \underline{71.7\%} / \underline{57.8\%} \\
 		\midrule
 		
 		\multirow{3}{*}{CIFAR-10 Gaussian} 
 		& FedCorr & \multirow{3}{*}{50\%} & \underline{7.08} & \underline{34.25} & -- \\
-		& FedOCR (ours) & & \textbf{4.47} & \textbf{18.33} & \textbf{36.9\%} / \textbf{46.5\%} \\
+		& FedOCR (ours) & & $\boldsymbol{4.47}$ & $\boldsymbol{18.33}$ & $\boldsymbol{36.9\%}$ / $\boldsymbol{46.5\%}$ \\
 		& FedOCR (ours) + FedCor & & 7.37 & 54.24 & -4.1\% / -58.4\% \\
 		\midrule
 		
 		\multirow{3}{*}{CIFAR-100 Linear} 
 		& FedCorr & \multirow{3}{*}{28\%} & \underline{13.14} & 85.30 & -- \\
-		& FedOCR (ours) & & \textbf{9.84} & \textbf{71.81} & \textbf{25.1\%} / \textbf{15.8\%} \\
+		& FedOCR (ours) & & $\boldsymbol{9.84}$ & $\boldsymbol{71.81}$ & $\boldsymbol{25.1\%}$ / $\boldsymbol{15.8\%}$ \\
 		& FedOCR (ours) + FedCorr & & 16.78 & \underline{72.26} & -27.7\% / \underline{15.3\%} \\
 		\midrule
 		
 		\multirow{3}{*}{CIFAR-100 Gaussian} 
 		& FedCorr & \multirow{3}{*}{30\%} & 11.67 & 45.18 & -- \\
-		& FedOCR (ours) & & \textbf{8.12} & \underline{44.76} & \textbf{30.4\%} / \underline{0.9\%} \\
-		& FedOCR (ours) + FedCorr & & \underline{9.03} & \textbf{41.89} & \underline{22.6\%} / \textbf{7.3\%} \\
+		& FedOCR (ours) & & $\boldsymbol{8.12}$ & \underline{44.76} & $\boldsymbol{30.4\%}$ / \underline{0.9\%} \\
+		& FedOCR (ours) + FedCorr & & \underline{9.03} & $\boldsymbol{41.89}$ & \underline{22.6\%} / $\boldsymbol{7.3\%}$ \\
 		\bottomrule
 	\end{tabular}
 \end{table*}
@@ -895,14 +926,17 @@ This means the theory is not just abstract: it ranks the oracle retained sets in
 \label{subsec:exp_setup}
 In this section, we first present a controlled oracle experiment to validate our theoretical analysis. We then evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.	
 \paragraph{\textbf{Experimental setup}}
-We evaluate on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}.
-Unless otherwise specified, the training data are split over $N=50$ clients and $K=20$ clients participate in each federated training run.
-We use Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5 to simulate Non-IID data~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
-Label noise is applied symmetrically at the client level, following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}.
-The main experiments use linear and Gaussian heterogeneous noise to cover two complementary cases: linear noise is a controllable high-noise stress test, while Gaussian noise models a more random corruption pattern that is closer to practical uncertainty.
-All methods are trained for $T=200$ global rounds under the same maximum round budget.
-For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, which keeps the pre-screening lightweight and consistent with the deployment-oriented design.
-For local training, we use Adam with learning rate $1\times10^{-4}$ and batch size 64.
+We evaluate FedOCR on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}. 
+Unless otherwise specified, the training data are distributed over $N=50$ clients, and $K=20$ clients are selected for each federated training run. 
+We simulate Non-IID data using Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5~\cite{hsu2019measuring,li2021silos,zhu2021survey}. 
+Client-level symmetric label noise is then injected following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}. 
+We consider two heterogeneous noise modes: \textit{linear noise}, where client noise rates are evenly spaced in $[0,1]$, and \textit{Gaussian noise}, where rates are drawn from $\mathcal{N}(0.3,0.15^2)$ and clipped to $[0,1]$. 
+The former provides a controllable high-noise stress test, while the latter models a more random corruption pattern closer to practical uncertainty.
+
+All methods are trained under the same maximum budget of $T=200$ global rounds. 
+For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, keeping the pre-screening lightweight and consistent with the deployment-oriented design. 
+For local training, all methods use Adam with learning rate $1\times10^{-4}$ and batch size 64.
+
 We compare against three baseline families:
 \begin{itemize}
 	\setlength{\itemsep}{0.1em}
@@ -912,8 +946,6 @@ We compare against three baseline families:
 	\item \textbf{Training-stage correction baselines:} FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
 	\item \textbf{Client-selection baselines:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
 \end{itemize}
-Additional implementation details are provided in Appendix~\ref{app:experiment_setup_details}.
-
 
 \paragraph{\textbf{Comparison with baselines}}
 \label{para:comp_nfl}
@@ -1862,9 +1894,7 @@ All methods are trained for $T=200$ global rounds under the same maximum round b
 For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, which keeps the pre-screening lightweight and consistent with the deployment-oriented design.
 For local training, we use Adam with learning rate $1\times10^{-4}$ and batch size 64.
 
-\subsection{Noise Modes}
-\label{app:noise_mode}
-We use two heterogeneous noise modes. In \textit{linear noise}, client noise rates are evenly spaced in $[0,1]$. In \textit{Gaussian noise}, rates are drawn from $\mathcal{N}(0.3, 0.15^2)$ and clipped to $[0,1]$. Label noise is applied symmetrically within each client.
+
 
 \section{Supplementary Experimental Curves}
 \label{app:more_curves}
@@ -1906,14 +1936,14 @@ The retained-budget curve below is the appendix version of the greedy-set valida
 The curve is non-monotonic: retaining too few clients leaves the pool under-covered, while retaining too many reintroduces accumulated noise.
 This is why FedOCR searches for a high-scoring suboptimal retained set rather than maximizing participation blindly.
 
-\begin{figure}[t]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figure/scale_exp/top50-intro.png}
     \caption{\small Final test accuracy under different retained-client budgets in noisy and Non-IID settings. The curve is non-monotonic: admitting too few clients leaves the retained pool under-covered, while admitting too many reintroduces accumulated noise. This motivates our greedy search for a high-scoring suboptimal retained set rather than a blindly maximal one.}
     \label{fig:greedy_suboptimal}
 \end{figure}
 
-\begin{figure*}[t]
+\begin{figure*}[h]
     \centering
     \includegraphics[width=0.31\textwidth]{figure/screening.png}
     \hfill
@@ -1949,7 +1979,7 @@ RFA~\cite{pillutla2022robust} & 17.32$\pm$0.17 & 20.52$\pm$0.05 & 21.31$\pm$0.20
 FedGreed~\cite{kritharakis2025fedgreed} & 8.73$\pm$1.45 & 20.79$\pm$1.05 & \underline{29.03$\pm$0.85} \\
 LASA~\cite{xu2025lasa} & 17.63$\pm$0.11 & 23.69$\pm$0.17 & 25.44$\pm$0.23 \\
 FedNed~\cite{lu2024fedned} & 17.57$\pm$0.26 & 23.63$\pm$0.03 & 24.06$\pm$0.20 \\
-FedNoRo~\cite{wu2023fednoro} & \textbf{22.56$\pm$0.20} & \textbf{30.20$\pm$0.08} & \textbf{32.82$\pm$3.79} \\
+FedNoRo~\cite{wu2023fednoro} & $\boldsymbol{22.56\pm0.20}$ & $\boldsymbol{30.20\pm0.08}$ & $\boldsymbol{32.82\pm3.79}$ \\
 FedCorr~\cite{xu2022fedcorr} & \underline{22.03$\pm$1.01} & 26.19$\pm$0.16 & 24.03$\pm$0.24 \\
 FedCS~\cite{hao2025fedcs} & 14.07$\pm$0.26 & 19.84$\pm$0.20 & 21.43$\pm$0.80 \\
 FedFixer~\cite{ji2024fedfixer} & 18.66$\pm$0.14 & 23.45$\pm$0.26 & 25.37$\pm$0.23 \\
@@ -1971,16 +2001,16 @@ FedOCR (ours) & 21.67$\pm$0.27 & \underline{28.73$\pm$0.72} & 28.93$\pm$0.52 \\
 		\midrule
 		All & 46.55$\pm$1.44 & 60.89$\pm$1.89 & 67.68$\pm$1.72 \\
 		RFA~\cite{pillutla2022robust} & 38.82$\pm$1.50 & 63.38$\pm$3.24 & 61.60$\pm$1.47 \\
-		FedGreed~\cite{kritharakis2025fedgreed} & 21.18$\pm$0.00 & \underline{83.09$\pm$3.17} & \textbf{89.33$\pm$2.27} \\
+		FedGreed~\cite{kritharakis2025fedgreed} & 21.18$\pm$0.00 & \underline{83.09$\pm$3.17} & $\boldsymbol{89.33\pm2.27}$ \\
 		LASA~\cite{xu2025lasa} & 38.97$\pm$0.86 & 54.97$\pm$0.51 & 57.08$\pm$1.91 \\
 		FedNed~\cite{lu2024fedned} & 45.50$\pm$2.12 & 64.29$\pm$0.54 & 67.96$\pm$1.49 \\
-		FedNoRo~\cite{wu2023fednoro} & 33.92$\pm$2.13 & \textbf{85.48$\pm$0.41} & 78.07$\pm$0.51 \\
+		FedNoRo~\cite{wu2023fednoro} & 33.92$\pm$2.13 & $\boldsymbol{85.48\pm0.41}$ & 78.07$\pm$0.51 \\
 		FedCorr~\cite{xu2022fedcorr} & 4.88$\pm$0.86 & 55.54$\pm$13.10 & 69.09$\pm$9.95 \\
 		FedCS~\cite{hao2025fedcs} & 24.66$\pm$1.40 & 56.60$\pm$3.02 & 79.06$\pm$1.39 \\
 		FedFixer~\cite{ji2024fedfixer} & \underline{46.72$\pm$1.47} & 61.06$\pm$1.92 & 67.85$\pm$1.75 \\
 		FedDiv~\cite{li2024feddiv} & 46.41$\pm$1.46 & 60.75$\pm$1.91 & 67.54$\pm$1.74 \\
 		\midrule
-		FedOCR (ours) & \textbf{47.71$\pm$1.08} & 81.05$\pm$0.80 & \underline{86.82$\pm$0.10} \\
+		FedOCR (ours) & $\boldsymbol{47.71\pm1.08}$ & 81.05$\pm$0.80 & \underline{86.82$\pm$0.10} \\
 		\bottomrule
 	\end{tabular}
 \end{table}
