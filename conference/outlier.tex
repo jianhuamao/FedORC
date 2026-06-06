@@ -11,6 +11,7 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{array}
+\renewcommand{\tablename}{Table}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -772,7 +773,7 @@ Algorithm~\ref{alg:FedOCR} summarizes the complete FedOCR procedure.
 
 \begin{table*}[!t]
 	\centering
-	\caption{Test accuracy (\%) of representative noisy-label FL and client-selection methods under heterogeneous label noise on MedMNIST~\cite{yang2023medmnist}, CIFAR-10~\cite{krizhevsky2009learning}, and CIFAR-100~\cite{krizhevsky2009learning}. Results are collected at $\alpha=0.5$ with 50 candidate clients and reported as mean$\pm$standard deviation. FedOCR uses the proposed automatic client-block outlier-removal rule in this table. Best results are highlighted in bold and second-best results are underlined.}
+	\caption{\normalfont Test accuracy (\%) of representative noisy-label FL and client-selection methods under heterogeneous label noise on MedMNIST~\cite{yang2023medmnist}, CIFAR-10~\cite{krizhevsky2009learning}, and CIFAR-100~\cite{krizhevsky2009learning}. Results are collected at $\alpha=0.5$ with 50 candidate clients and reported as mean$\pm$standard deviation. FedOCR uses the proposed automatic client-block outlier-removal rule in this table. Best results are highlighted in bold and second-best results are underlined.}
 	\label{tab:noisy_fl_accuracy}
 	\setlength{\tabcolsep}{3.2pt}
 	\renewcommand{\arraystretch}{1.15}
@@ -835,7 +836,7 @@ Using all clients sits between these extremes because it mixes noisy and mismatc
 So the oracle plot does more than rank strategies; it confirms that the theoretical bound captures the same cleanliness-versus-coverage tension that drives the empirical target risk.
 \begin{table*}[!t]
 	\centering
-	\caption{Cost comparison at matched target accuracy. For each scenario, the reference method is selected as a representative strong baseline from the three baseline families considered in Table~\ref{tab:noisy_fl_accuracy}, including full-round robust training baselines, training-stage correction baselines, and client-selection baselines. Computation is reported in $10^6$ FEP and communication in GB. Saving denotes the computation / communication reduction of FedOCR-based methods relative to the corresponding reference method. Negative values indicate higher cost than the reference method. Best and second-best costs within each scenario are highlighted in bold and underlined, respectively.}
+	\caption{\normalfont Cost comparison at matched target accuracy. For each scenario, the reference method is selected as a representative strong baseline from the three baseline families considered in Table~\ref{tab:noisy_fl_accuracy}, including full-round robust training baselines, training-stage correction baselines, and client-selection baselines. Computation is reported in $10^6$ FEP and communication in GB. Saving denotes the computation / communication reduction of FedOCR-based methods relative to the corresponding reference method. Negative values indicate higher cost than the reference method. Best and second-best costs within each scenario are highlighted in bold and underlined, respectively.}
 	\label{tab:efficiency_linear}
 	\setlength{\tabcolsep}{4.5pt}
 	\renewcommand{\arraystretch}{1.12}
@@ -923,7 +924,7 @@ When heterogeneity is milder, methods that keep more clients can close the gap.
 
 \begin{table}[h]
 \centering
-\caption{CIFAR-10 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
+\caption{\normalfont CIFAR-10 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
 \label{tab:noniid_robustness}
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.10}
@@ -977,7 +978,7 @@ The label-noise sweep is flat because FedOCR never uses probing labels.
 That means label quality is not a real requirement here, which makes the probing set much easier to build in practice.
 \begin{table}[!t]
 	\centering
-	\caption{FedOCR probing-set sensitivity on CIFAR-10~\cite{krizhevsky2009learning} under linear heterogeneous noise. Results are reported as the last five rounds' mean$\pm$standard deviation, together with the final retained client count and the number of sample scans used by the admission stage.}
+	\caption{\normalfont FedOCR probing-set sensitivity on CIFAR-10~\cite{krizhevsky2009learning} under linear heterogeneous noise. Results are reported as the last five rounds' mean$\pm$standard deviation, together with the final retained client count and the number of sample scans used by the admission stage.}
 	\label{tab:probing_set_sensitivity}
 	\setlength{\tabcolsep}{3.6pt}
 	\renewcommand{\arraystretch}{1.12}
@@ -1016,17 +1017,17 @@ That means label quality is not a real requirement here, which makes the probing
 \subsection{Analysis of Selected Client Subsets}
 \label{subsec:subset_analysis}
 
-To understand why FedOCR improves robustness, we analyze the clean/noisy class composition of the retained clients.
-Figure~\ref{fig:subset_composition_main} reports the class-wise composition of the outlier-removal client sets under linear heterogeneous noise.
-The figure shows that FedOCR changes the pool, not just the pool size.
-Compared with the alternatives, it keeps a subset that is cleaner and more class-complete.
-That matters because reliability alone can leave coverage gaps, while diversity alone can keep noisy clients.
-FedOCR avoids both failures by balancing the two.
+To understand why FedOCR improves robustness, we analyze the class-wise sample mass and noise rate of the retained client sets.
+Figure~\ref{fig:subset_composition_main} shows the retained pools under linear heterogeneous noise.
+FedOCR keeps the cleanest pool among the compared methods and still spreads mass across classes.
+RS and Fixed keep broader pools, but they also keep more noisy mass.
+EMD, PoC, and GS do not solve this trade-off either: they can improve coverage, but they still retain many noisy classes.
+So the figure says the same thing as the accuracy table: FedOCR keeps clients that are both cleaner and more balanced.
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{figure/数据分布/线性加噪/cifar10.png}
-    \caption{Class-wise clean/noisy sample composition of outlier-removal client sets under linear heterogeneous noise. Positive bars denote clean samples, while negative bars denote noisy samples.}
+    \includegraphics[width=\linewidth]{figure/数据分布/线性加噪/fig9.pdf}
+    \caption{\normalfont Class-wise sample-mass and noise-rate profile of the retained client sets under linear heterogeneous noise. The polar radius shows the retained sample mass, and the color encodes the class-wise noise rate from low (green) to high (red).}
     \label{fig:subset_composition_main}
 \end{figure}
 
@@ -1046,7 +1047,7 @@ So the components play different roles: reliability is the gatekeeper, represent
 
 \begin{table}[h]
 	\centering
-	\caption{Ablation study on CIFAR-10 under linear heterogeneous noise. The table isolates the effect of reliability scoring, representativeness scoring, and noise-adaptive calibration.}
+	\caption{\normalfont Ablation study on CIFAR-10 under linear heterogeneous noise. The table isolates the effect of reliability scoring, representativeness scoring, and noise-adaptive calibration.}
 	\label{tab:ablation_fedraa}
 	\setlength{\tabcolsep}{2pt}
 	\renewcommand{\arraystretch}{1.15}
@@ -1924,7 +1925,7 @@ This result complements the main-table conclusion: the benefit of pre-training c
 
 \begin{table}[h]
 \centering
-\caption{CIFAR-100 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
+\caption{\normalfont CIFAR-100 accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
 \label{tab:cifar100_noniid_appendix}
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.12}
@@ -1949,7 +1950,7 @@ FedOCR (ours) & 21.67$\pm$0.27 & \underline{28.73$\pm$0.72} & 28.93$\pm$0.52 \\
 \end{table}
 \begin{table}[h]
 	\centering
-	\caption{MedMNIST accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results use the same best-test-accuracy protocol as Table~\ref{tab:noisy_fl_accuracy} and are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
+	\caption{\normalfont MedMNIST accuracy (\%) under linear noise with different Dirichlet Non-IID levels. Results use the same best-test-accuracy protocol as Table~\ref{tab:noisy_fl_accuracy} and are reported as mean$\pm$standard deviation. Best results are highlighted in bold and second-best results are underlined.}
 	\label{tab:medmnist_noniid_appendix}
 	\setlength{\tabcolsep}{5pt}
 	\renewcommand{\arraystretch}{1.10}
