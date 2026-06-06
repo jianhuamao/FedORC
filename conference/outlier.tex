@@ -68,11 +68,11 @@ email address or ORCID}
 \maketitle
 
 \begin{abstract}
-Federated learning enables privacy-preserving distributed training by keeping data local and exchanging only model updates. However, when Non-IID data and label noise are coupled across clients, robust learning is often addressed at a fine-grained sample level, for example by correcting, reweighting, or filtering noisy instances during local training. Such sample-level processing can be precise, but in federated systems it may require additional local computation, cross-round state maintenance, privacy-sensitive confidence signals, or extra communication.
+Federated learning keeps data on devices, but noisy labels and non-IID data can still hurt training. Many existing defenses clean data during local training at the sample level, which can improve accuracy but often adds extra computation, communication, and privacy-sensitive bookkeeping.
 
-This paper shifts the denoising perspective from individual samples to federated data blocks. Because the server cannot freely manipulate private samples, the feasible unit of pre-training control is naturally the client block. We therefore formulate robust federated learning as client-block-level outlier removal: before training, the server constructs an \emph{outlier-removal client set} by filtering clients that are likely to inject unreliable supervision while retaining enough target-relevant coverage. To this end, we propose FedOCR, a reliability- and representativeness-aware outlier-removal framework. Starting from a unified test-risk bound, we derive practical criteria that jointly characterize client-block reliability and subset-level distribution alignment, and use them to build the retained participant pool before federated optimization.
+We propose FedOCR, a simple pre-training filter that removes risky clients before federated optimization starts. FedOCR scores each client in two ways: it checks whether the client looks reliable on a small probing set, and it checks whether the remaining clients still cover the target distribution well. Using these signals, FedOCR keeps a client set that is both cleaner and more balanced.
 
-Extensive experiments under diverse noise patterns and heterogeneity settings show that FedOCR achieves competitive or superior test performance while substantially reducing the computation and communication required to reach target accuracy levels. Compatibility studies further show that the proposed client-level outlier removal is orthogonal to training-stage noisy-label correction, making FedOCR a lightweight front-end module for robust federated learning.
+Experiments on MedMNIST, CIFAR-10, and CIFAR-100 show that FedOCR improves robustness under noisy and non-IID settings, reduces the cost of reaching a target accuracy, and can work together with training-stage noisy-label correction. Overall, FedOCR provides a practical front-end step for robust federated learning.
 
 \end{abstract}
 
