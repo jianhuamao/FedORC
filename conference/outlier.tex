@@ -899,7 +899,7 @@ We evaluate on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsk
 Unless otherwise specified, the training data are split over $N=50$ clients and $K=20$ clients participate in each federated training run.
 We use Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5 to simulate Non-IID data~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
 Label noise is applied symmetrically at the client level, following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}.
-The main experiments use linear and Gaussian heterogeneous noise.
+The main experiments use linear and Gaussian heterogeneous noise to cover two complementary cases: linear noise is a controllable high-noise stress test, while Gaussian noise models a more random corruption pattern that is closer to practical uncertainty.
 All methods are trained for $T=200$ global rounds under the same maximum round budget.
 For FedOCR's admission stage, we use a short 10-epoch local adaptation to compute the filtering indicators, which keeps the pre-screening lightweight and consistent with the deployment-oriented design.
 For local training, we use Adam with learning rate $1\times10^{-4}$ and batch size 64.
