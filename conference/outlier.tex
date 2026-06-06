@@ -848,9 +848,15 @@ We evaluate FedOCR from five complementary perspectives:
 \subsection{Oracle Experiment}
 \label{subsec:oracle_exp}
 
-The controlled oracle validation is moved to Appendix~\ref{app:oracle_experiment_details}; it is used only to check whether the risk factors in Theorem~\ref{thm:main_bound} rank retained client-block sets in the expected order.
+The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and bound plots.
+Figure~\ref{fig:oracle_accuracy} shows that the oracle FedOCR-style retention strategy achieves the best accuracy among the four retention rules, consistent with the theoretical ranking.
 
-
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.92\linewidth]{figure/oracle/acc.pdf}
+    \caption{Test accuracy curves under the oracle retention strategies.}
+    \label{fig:oracle_accuracy}
+\end{figure}
 
 \begin{table*}[!t]
 	\centering
@@ -1897,7 +1903,7 @@ Target test set & 3000 clean samples with balanced class prior \\
 \end{table}
 
 \paragraph{Oracle results.}
-The oracle figures below show the same qualitative pattern described in the main text.
+The oracle bound and target-risk figures below show the same qualitative pattern described in the main text.
 The FedOCR ideal subset achieves the lowest theoretical bound because it reduces both the label-noise term and the distribution-mismatch term, while the balanced noisy subset has the largest bound.
 The empirical target-risk curves further confirm that the FedOCR ideal subset attains the lowest target risk and the smallest bound gap.
 
@@ -1913,13 +1919,6 @@ The empirical target-risk curves further confirm that the FedOCR ideal subset at
     \includegraphics[width=0.92\linewidth]{figure/oracle/risk_bound.png}
     \caption{Empirical target risk and theoretical upper bound during oracle training.}
     \label{fig:oracle_risk}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.92\linewidth]{figure/oracle/acc.pdf}
-    \caption{Test accuracy curves under the same oracle retention strategies.}
-    \label{fig:oracle_accuracy}
 \end{figure}
 
 \section{Experimental Setup Details}
