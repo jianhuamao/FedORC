@@ -770,51 +770,6 @@ In high-uncertainty regimes, the retained set can shrink to avoid unreliable cli
 
 Algorithm~\ref{alg:FedOCR} summarizes the complete FedOCR procedure.
 
-
-\section{Experiments}
-\label{sec:experiment}
- 
-•
-We evaluate FedOCR from five complementary perspectives:
-\begin{itemize}
-\setlength{\itemsep}{0.15em}
-\setlength{\topsep}{0.2em}
-\setlength{\parsep}{0pt}
-	\item \textbf{Oracle validation.} We check whether the risk factors
-	in Theorem 1 explain the quality of different retained
-	client-block sets.
-	\item \textbf{Main comparison.} We compare FedOCR with noisy label FL methods and client selection baselines under
-	coupled label noise and Non-IID heterogeneity.
-	\item \textbf{Sensitivity analysis.}  We study how Non-IID strength,
-	admission hyperparameters, and probing-set construction affect the retained client pool and final
-	accuracy.
-	\item \textbf{Subset analysis.} We analyze the outlier-removal client
-	sets to verify whether the retained clients are both
-	reliable and representative.
-	\item \textbf{Ablation study. }  We isolate the effects of reliability
-	filtering, distributional coverage control, and the
-	noise-adaptive calibration mechanism.
-\end{itemize}
-
-\subsection{Oracle Experiment}
-\label{subsec:oracle_exp}
-
-The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and the detailed bound analysis.
-Figure~\ref{fig:oracle_risk} compares the empirical target risk and the dynamic theoretical upper bound under four oracle retention strategies.
-
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figure/oracle/risk_bound.png}
-    \caption{Empirical target risk and theoretical upper bound during oracle training.}
-    \label{fig:oracle_risk}
-\end{figure*}
-
-The FedOCR ideal strategy, which retains $C1$, $C2$, and $C3$, yields the steepest drop in both curves and finishes with the smallest empirical target risk ($0.0923$) and the tightest bound ($0.2311$), showing that a retained pool that is simultaneously cleaner and more representative gives the most favorable risk profile.
-By contrast, the clean-only skewed pool $(C1,C2)$ removes the noisiest client but sacrifices coverage; its final target risk remains higher ($0.3417$) even though the bound is moderately controlled ($0.5000$).
-The balanced-noisy singleton $C4$ preserves class coverage but is dominated by label noise, so both the empirical risk ($0.6560$) and the bound ($1.4033$) stay high throughout training.
-Using all clients produces an intermediate empirical risk ($0.1700$), but the bound remains much looser ($0.8178$) because the retained pool mixes noisy and distribution-mismatched clients.
-Overall, the figure shows that the oracle risk bound captures the relative quality of the retained client-block sets, and that the FedOCR-style choice best balances cleanliness and coverage.
-
 \begin{table*}[!t]
 	\centering
 	\caption{Test accuracy (\%) of representative noisy-label FL and client-selection methods under heterogeneous label noise on MedMNIST~\cite{yang2023medmnist}, CIFAR-10~\cite{krizhevsky2009learning}, and CIFAR-100~\cite{krizhevsky2009learning}. Results are collected at $\alpha=0.5$ with 50 candidate clients and reported as mean$\pm$standard deviation. FedOCR uses the proposed automatic client-block outlier-removal rule in this table. Best results are highlighted in bold and second-best results are underlined.}
@@ -859,6 +814,25 @@ Overall, the figure shows that the oracle risk bound captures the relative quali
 	\end{tabular}
 \end{table*}
 
+\section{Experiments}
+\label{sec:experiment}
+In this section, we first present a controlled oracle experiment to validate our theoretical analysis. We then evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.
+\subsection{Oracle Experiment}
+\label{subsec:oracle_exp}
+The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_experiment_details} provides the full setup and the detailed bound analysis.
+Figure~\ref{fig:oracle_risk} compares the empirical target risk and the dynamic theoretical upper bound under four oracle retention strategies.
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{figure/oracle/risk_bound.png}
+	\caption{Empirical target risk and theoretical upper bound during oracle training.}
+	\label{fig:oracle_risk}
+\end{figure}
+The FedOCR ideal strategy, which retains $C1$, $C2$, and $C3$, yields the steepest drop in both curves and finishes with the smallest empirical target risk ($0.0923$) and the tightest bound ($0.2311$), showing that a retained pool that is simultaneously cleaner and more representative gives the most favorable risk profile.
+By contrast, the clean-only skewed pool $(C1,C2)$ removes the noisiest client but sacrifices coverage; its final target risk remains higher ($0.3417$) even though the bound is moderately controlled ($0.5000$).
+The balanced-noisy singleton $C4$ preserves class coverage but is dominated by label noise, so both the empirical risk ($0.6560$) and the bound ($1.4033$) stay high throughout training.
+Using all clients produces an intermediate empirical risk ($0.1700$), but the bound remains much looser ($0.8178$) because the retained pool mixes noisy and distribution-mismatched clients.
+Overall, the figure shows that the oracle risk bound captures the relative quality of the retained client-block sets, and that the FedOCR-style choice best balances cleanliness and coverage.
+
 \subsection{Main experiments}
 \label{subsec:exp_setup}
 	We evaluate FedOCR from five aspects:
@@ -872,14 +846,15 @@ Overall, the figure shows that the oracle risk bound captures the relative quali
 		\item \textbf{Sensitivity:} effects of admission hyperparameters and probing-set construction.
 		\item \textbf{Mechanism:} retained-subset analysis and ablation of the scoring terms.
 	\end{itemize}	
-	We compare against two groups of baselines:
-	\begin{itemize}
-		\setlength{\itemsep}{0.1em}
-		\setlength{\topsep}{0.15em}
-		\setlength{\parsep}{0pt}
-		\item \textbf{Noisy-label FL methods:} RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, FedNed~\cite{lu2024fedned}, FedNoRo~\cite{wu2023fednoro}, FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
-		\item \textbf{Client-selection methods:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
-	\end{itemize}
+We compare against three groups of baselines:
+\begin{itemize}
+	\setlength{\itemsep}{0.1em}
+	\setlength{\topsep}{0.15em}
+	\setlength{\parsep}{0pt}
+	\item \textbf{Full-round robust training baselines:} RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, FedNed~\cite{lu2024fedned}, and FedNoRo~\cite{wu2023fednoro}.
+	\item \textbf{Training-stage correction baselines:} FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
+	\item \textbf{Client-selection baselines:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
+\end{itemize}
 \paragraph{Implementation details.}
 The full experimental setup, including dataset splits, noise construction, client counts, and optimization hyperparameters, is provided in Appendix~\ref{app:experiment_setup_details}.
 
