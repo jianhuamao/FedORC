@@ -116,19 +116,19 @@ Our main contributions are summarized as follows:
 \end{itemize}
 \section{Related Work}
 
-\paragraph{Centralized outlier removal}
+\paragraph{\textbf{Centralized outlier removal}}
 Outlier removal in centralized learning has long focused on instance-level noisy-label filtering and robust training.
 Classical approaches correct labels, reweight suspicious samples, or identify clean examples by low loss or high confidence, including loss correction, co-teaching, confident learning, and related noisy-label routines~\cite{natarajan2013noisy,patrini2017loss,han2018coteaching,zhang2021nochange,northcutt2021confident}.
 These methods are effective because the learner can directly inspect all samples and, when available, use validation evidence to identify harmful instances.
 FedOCR inherits this robustness intuition, but moves the removal decision one level up, to client blocks rather than individual samples.
 
-\paragraph{Noisy-label learning in FL}
+\paragraph{\textbf{Noisy-label learning in FL}}
 Federated learning inherits the same noisy-label problem, but the privacy-preserving and communication-constrained setting makes sample-level correction harder to apply repeatedly~\cite{li2020fedprox,karimireddy2020scaffold,khaled2020convergence,liang2023fednoisy}.
 Existing FL methods adapt centralized ideas through label correction, sample reweighting, small-loss selection, peer-model filtering, and local data refinement~\cite{tsouvalas2022labeling,xu2022fedcorr,wu2023fednoro,li2024feddiv,ji2024fedfixer,hao2025fedcs,sivasubramanian2024gcfl}.
 While effective, these approaches often add extra local computation, confidence tracking, state maintenance, or privacy-sensitive signals, and they typically operate after clients have already been admitted to training~\cite{kairouz2021advances,xu2022fedcorr,hao2025fedcs}.
 FedOCR targets an earlier stage: it screens client blocks before training so that downstream methods can work on a cleaner participant pool.
 
-\paragraph{Client-level dynamic outlier removal}
+\paragraph{\textbf{Client-level dynamic outlier removal}}
 A separate line of work studies client selection to improve FL efficiency and convergence under communication and resource constraints~\cite{fu2023client,almanifi2023communication,le2024practicality,jia2025comst}.
 Representative methods choose clients by estimated utility, loss, gradient correlation, diversity, or cluster-level informativeness~\cite{lai2021oort,cho2022power,tang2022fedcor,zhang2023dpp,ACFL}.
 Most of these methods are round-wise schedulers: they ask which clients are useful for the current communication round, not whether a client should remain in the pool at all.
@@ -855,11 +855,11 @@ We compare against three groups of baselines:
 	\item \textbf{Training-stage correction baselines:} FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
 	\item \textbf{Client-selection baselines:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
 \end{itemize}
-\paragraph{Implementation details.}
+\paragraph{\textbf{Implementation details.}}
 The full experimental setup, including dataset splits, noise construction, client counts, and optimization hyperparameters, is provided in Appendix~\ref{app:experiment_setup_details}.
 
 
-\paragraph{Comparison with baselines}
+\paragraph{\textbf{Comparison with baselines}}
 \label{para:comp_nfl}
 We first compare FedOCR with noisy-label FL baselines under linear and Gaussian heterogeneous noise to evaluate noisy-label robustness.
 Table~\ref{tab:noisy_fl_accuracy} reports the accuracy results on MedMNIST~\cite{yang2023medmnist}, CIFAR-10~\cite{krizhevsky2009learning}, and CIFAR-100~\cite{krizhevsky2009learning}.
@@ -955,7 +955,7 @@ FedOCR (ours) & $\boldsymbol{30.27\pm0.35}$ & $\boldsymbol{56.60\pm0.24}$ & $\bo
 \bottomrule
 \end{tabular}
 \end{table}
-\paragraph{Hyperparameter sensitivity}
+\paragraph{\textbf{Hyperparameter sensitivity}}
 We study three key hyperparameters in the outlier-removal stage: the noise-adaptive strength, the first-round local epoch budget used to compute filtering indicators, and the threshold range $\eta$.
 Figure~\ref{fig:hyperparameter_sensitivity} reports the sensitivity results on the CIFAR-10 linear-noise setting.
 The three sweeps show that FedOCR works best in a moderate filtering regime: overly conservative settings retain too many risky clients, while overly permissive settings shrink the pool and hurt accuracy.
@@ -972,7 +972,7 @@ For the first-round epoch budget, 10 epochs give the most useful filtering indic
 For $\eta$, the default range $[0.10,0.30]$ selects 20 clients and achieves the best accuracy; smaller ranges keep too many noisy clients, while larger ranges become too strict.
 Additional client-pool-size curves are provided in Appendix Fig.~\ref{fig:screening}.
 
-\paragraph{Probing-set sensitivity}
+\paragraph{\textbf{Probing-set sensitivity}}
 Beyond the admission hyperparameters, the probing set itself is another important design knob because its input samples determine the observable entropy and probing-predicted coverage signals used by FedOCR.
 Table~\ref{tab:probing_set_sensitivity} reports probing-set configurations on CIFAR-10~\cite{krizhevsky2009learning} under the same linear-noise setting used in the dedicated probe study (\emph{ResNet18}, $\alpha=0.5$, and $\eta\in[0.1,0.3]$).
 All runs use a fixed random seed, so identical rows mean that FedOCR selected the same client set and followed the same training trajectory rather than exhibiting a reporting artifact.
@@ -1565,7 +1565,7 @@ Using Pinsker and Jensen,
 Combining with the lower bound on $H(\tilde\eta_i(x))$ yields \eqref{eq:entropy_bridge_appendix}. Finally, $h_K(\rho)$ is strictly increasing on $[0,1-1/K)$, so the ranking induced by $\bar H_i$ agrees with the ranking induced by $\rho_i$ up to the stated relaxation. \qed
 \end{proof}
 
-\paragraph{A useful corollary.}
+\paragraph{\textbf{A useful corollary.}}
 Since $h_K$ is invertible on $[0,1-1/K)$, \eqref{eq:entropy_bridge_appendix} implies the conservative upper bound
 \begin{equation}
 \rho_i
@@ -1620,7 +1620,7 @@ F_{\mathrm{sub}}(S_{\mathrm{greedy}})
 The modular term $\sum_{i\in S}r_i$ is monotone submodular because its marginal gain is constant. The facility-location term $G(S)$ is also monotone submodular: adding an element can only increase the pointwise maxima, and the marginal gain decreases as the current subset grows. A nonnegative linear combination of monotone submodular functions remains monotone submodular. The $(1-1/e)$ guarantee then follows from the classical theorem of Nemhauser \emph{et al.} \cite{nemhauser1978submodular}. \qed
 \end{proof}
 
-\paragraph{Interpretation.}
+\paragraph{\textbf{Interpretation.}}
 This proposition clarifies the conceptual role of FedOCR. The retained participant pool can be viewed as an \emph{outlier-removal client set}: it compresses the candidate population into a smaller block-level subset that preserves representative coverage while filtering out unreliable or outlying clients.
 
 \section{Discussion on probing-Consistency Residuals}
@@ -1834,7 +1834,7 @@ Target test set & 3000 clean samples with balanced class prior \\
 \end{tabular}
 \end{table}
 
-\paragraph{Oracle results.}
+\paragraph{\textbf{Oracle results.}}
 The oracle bound and target-risk figures below show the same qualitative pattern described in the main text.
 The FedOCR ideal subset achieves the lowest theoretical bound because it reduces both the label-noise term and the distribution-mismatch term, while the balanced noisy subset has the largest bound.
 The empirical target-risk curves further confirm that the FedOCR ideal subset attains the lowest target risk and the smallest bound gap.
