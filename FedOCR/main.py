@@ -63,7 +63,7 @@ if __name__ == '__main__':
             f"clip=[{args.noise_gaussian_min},{args.noise_gaussian_max}]"
         )
     logging.info(
-        f"Ours Flags | use_distribution={int(args.ours_use_distribution)} "
+        f"FedOCR Flags | use_distribution={int(args.ours_use_distribution)} "
         f"use_quality={int(args.ours_use_quality)} "
         f"distribution_strategy={args.ours_distribution_strategy} "
         f"distribution_source={args.ours_distribution_source} "
