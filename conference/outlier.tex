@@ -823,7 +823,7 @@ The oracle experiment is summarized briefly here; Appendix~\ref{app:oracle_exper
 Figure~\ref{fig:oracle_risk} compares the empirical target risk and the dynamic theoretical upper bound under four oracle retention strategies.
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{figure/oracle/risk_bound.png}
+	\includegraphics[width=\linewidth]{figure/oracle/risk_bound.pdf}
 	\caption{Empirical target risk and theoretical upper bound during oracle training.}
 	\label{fig:oracle_risk}
 \end{figure}
@@ -1072,30 +1072,25 @@ So the components play different roles: reliability is the gatekeeper, represent
 \end{table}
 \section{Discussion}
 
-FedOCR relies on probing-based evidence because the server cannot inspect clients' raw data under the privacy constraints of FL~\cite{mcmahan2017communication,kairouz2021advances}.
-This design makes the method practical for pre-training client-block outlier removal, but it also means that the quality of the probing set affects the reliability of both filtering signals.
-This dependence is formalized in the residualized probing bound, where the gap between population risk factors and observable probing statistics is collected into explicit residual terms.
-Predictive entropy should therefore be interpreted as a probing for client-side predictive unreliability rather than as a direct estimator of the true label-noise rate~\cite{northcutt2021confident,guo2017calibration}.
-Similarly, the KL-based representativeness term measures alignment between the retained clients' probing-predicted coverage and a server-side target reference prior, so a poorly chosen reference prior or probing input distribution may shift the retained pool away from the true deployment target~\cite{ben2010theory,lipton2018labelshift}.
-The client-block granularity is also intentionally coarse: FedOCR does not identify every noisy sample inside retained clients.
-Instead, it removes high-risk data blocks before training and leaves residual instance-level noise to standard local correction methods if needed.
-This is why FedOCR is best viewed as a front-end outlier-removal module rather than a replacement for sample-level noisy-label learning~\cite{xu2022fedcorr,wu2023fednoro,li2024feddiv,ji2024fedfixer}.
-In long-running deployments where client populations or target distributions evolve, the one-shot outlier-removal rule may also need to be combined with periodic probing refresh or lightweight re-filtering.
-These limitations do not change the main conclusion, but they clarify the conditions under which proactive client-block outlier removal is most useful.
+FedOCR uses probing-based signals because the server cannot inspect raw client data under FL privacy constraints~\cite{mcmahan2017communication,kairouz2021advances}.
+That makes the method practical, but it also means the probing set matters.
+Predictive entropy is only a proxy for client unreliability, not a direct estimate of the true noise rate~\cite{northcutt2021confident,guo2017calibration}.
+The KL term is also only a coverage proxy relative to a server-side reference prior~\cite{ben2010theory,lipton2018labelshift}.
+So FedOCR is a coarse pre-training filter by design: it removes risky client blocks before training and leaves residual sample-level noise to downstream correction if needed~\cite{xu2022fedcorr,wu2023fednoro,li2024feddiv,ji2024fedfixer}.
+If the client population or target distribution changes over time, the probing set may need to be refreshed.
 
 \section{Conclusion}
 
-This paper studies robust federated learning from the perspective of pre-training client-block outlier removal.
-Under coupled label noise and Non-IID heterogeneity, simply retaining more clients can introduce unreliable supervision and target-mismatched updates, while retaining only clean clients may sacrifice distributional coverage~\cite{hsu2019measuring,zhu2021survey,liang2023fednoisy}.
-To address this trade-off, we propose FedOCR, a reliability- and representativeness-aware outlier-removal framework that constructs an outlier-removal client set before federated optimization begins.
-FedOCR estimates client reliability through probing-set predictive entropy and measures subset-level representativeness through KL-based probing distribution matching.
-Our theoretical analysis connects these two probing signals to label-noise contamination and target-distribution mismatch in a unified target-risk view.
+This paper studies robust federated learning by removing risky client blocks before training starts.
+FedOCR builds an outlier-removal client set using two signals: probing-set predictive entropy for reliability and KL-based probing matching for representativeness.
+Our theory explains why these two signals are related to label noise and target mismatch.
 
-Experiments across multiple datasets, noise patterns, and heterogeneity levels show that FedOCR retains lower-noise and more complementary client blocks, achieves competitive or superior robust accuracy, and reduces computation and communication cost at matched target accuracy.
-The ablation results further confirm that reliability filtering is essential under severe heterogeneous noise, while representativeness and adaptive calibration improve the balance between clean supervision and coverage.
-Compatibility results show that FedOCR is orthogonal to training-stage noisy-label correction: client-level outlier removal reduces the risk entering the global process, while sample-level correction can further handle residual noisy examples inside retained clients.
-These findings suggest that robust FL should not only correct unreliable updates during training, but also proactively control the quality of the retained participant pool at the natural block granularity of federated data.
-Future work will explore adaptive probing construction, privacy-preserving probing refinement, and outlier-removal strategies that can be updated over long-running federated deployments~\cite{kairouz2021advances,fu2023client}.
+The experiments show three clear results.
+First, FedOCR improves robustness under noisy and Non-IID settings.
+Second, it reduces computation and communication cost at matched accuracy.
+Third, it works with downstream noisy-label correction instead of replacing it.
+Overall, FedOCR shows that robust FL can benefit from filtering bad clients early, not only from correcting updates during training.
+Future work will study better probing construction, privacy-preserving probing, and online updates for long-running deployments~\cite{kairouz2021advances,fu2023client}.
 
 \bibliographystyle{IEEEtran}
 \bibliography{FedPeD_refs}
