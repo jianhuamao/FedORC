@@ -140,10 +140,10 @@ Because the server cannot inspect raw data directly, these criteria are realized
 \label{sec:theoretical_analysis}
 
 We study \emph{one-shot client-block outlier removal} before federated optimization starts.
-To make the analysis comparable to centralized outlier-removal literature, we first recall the ideal sample-level outlier-removal set (ORS): if the server could inspect all samples directly, it would surgically remove individual corrupted examples and retain the best sample subset for the target risk~\cite{natarajan2013noisy,patrini2017loss,han2018coteaching,northcutt2021confident,zhang2021nochange}.
-In FL, however, privacy and locality constraints prevent such sample-wise intervention~\cite{kairouz2021advances}; the feasible decision unit is an entire client block, which gives rise to the block-constrained client-level outlier-removal set (BC-ORS).
-BC-ORS is a coarser surrogate of ORS: it may be slightly suboptimal in accuracy because it cannot delete only the corrupted samples inside a client block, but it is the practical objective in FL because it can be identified using client-level signals rather than sample-level auditing.
-As illustrated in Fig.~\ref{fig:display}(c) and the experiments in Section~\ref{sec:experiment}, this block-level search is orders of magnitude more efficient and therefore more deployable in FL.
+Our goal is to construct, using only client-level signals, a retained client-block set that approximates the ideal sample-level outlier-removal set (ORS) from centralized outlier-removal literature~\cite{natarajan2013noisy,patrini2017loss,han2018coteaching,northcutt2021confident,zhang2021nochange}.
+In FL, however, privacy and locality constraints prevent sample-wise intervention~\cite{kairouz2021advances}; the feasible decision unit is an entire client block, which gives rise to the block-constrained client-level outlier-removal set (BC-ORS).
+BC-ORS is therefore the practical FL objective: it is coarser than ORS and may be slightly suboptimal in accuracy, but it can be identified from client-level signals and admits a much more efficient search.
+In this section, we provide a theoretical guarantee that BC-ORS-style pre-training filtering is aligned with reducing the target-risk upper bound.
 \subsection{Problem Setup}
 \label{subsec:problem_setup}
 
@@ -225,12 +225,10 @@ We nevertheless prefer BC-ORS in FL because privacy and locality constraints rul
 \label{subsec:risk_view}
 
 We justify pre-training client-level outlier removal from a risk perspective.
-ORS is the centralized oracle benchmark, but FL cannot realize it because the server cannot directly remove individual noisy samples from private client data~\cite{mcmahan2017communication,kairouz2021advances}.
-Therefore, the practical unit of filtering is the client itself, which makes BC-ORS the relevant deployable objective.
-If we keep a different client set $S$, we train on a different collection of local data blocks, and thus on a different training distribution~\cite{hsu2019measuring,li2021silos,zhu2021survey}.
-Some retained clients may bring many noisy labels, while others may make the retained data distribution deviate from the target distribution.
-Our analysis shows that both problems increase the target-risk upper bound.
-This motivates FedOCR to remove unreliable clients while keeping enough representative clients before training starts, thereby searching for a practical approximation to BC-ORS rather than the unattainable ORS.
+Because FL cannot realize sample-level ORS, the relevant question is whether a retained client-block set $S$ lowers the target-risk upper bound.
+Changing $S$ changes the training distribution induced by the selected local data blocks~\cite{hsu2019measuring,li2021silos,zhu2021survey}: some retained clients may inject noisy supervision, while others may shift the retained pool away from the target distribution.
+Our analysis shows that both effects increase the target-risk upper bound.
+This provides the theoretical guarantee behind FedOCR: it aims to remove unreliable clients while preserving enough representative ones, so that the retained pool is a practical BC-ORS approximation rather than an unattainable ORS.
 
 \begin{assumption}[Bounded loss]
 \label{assump:bounded_loss}
