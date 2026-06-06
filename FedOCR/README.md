@@ -106,15 +106,16 @@ The code supports the settings used in the paper:
 
 Generated logs, figures, and comparison artifacts are written to `result/`.
 The `oracle/` directory stores the controlled oracle experiments and the theoretical validation plots used in the paper.
+The appendix material is compiled separately from `conference/supplementary_material.tex`, and the generated PDF is stored at `supplementary_material.pdf` in the repository root.
 
 ## Notes
 
 - Some legacy log folders may still contain older names from earlier development stages.
   The current implementation uses the FedOCR name in the code path.
 - The standalone FedOCR results in the paper are `FedOCR + FedAvg`.
+- The main paper PDF no longer includes an appendix; the supplement is shipped as a separate PDF.
 - If you want a clean rerun, start from an empty `result/` folder so old outputs do not mix with new ones.
 
 ## Citation
 
 If you use this code, please cite the FedOCR paper.
-
