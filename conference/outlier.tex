@@ -872,13 +872,10 @@ When a downstream correction method is attached, the result is no longer purely 
 That is why the combined variants sometimes improve the target cost and sometimes do not: the downstream stage helps only when its correction ability is strong enough to justify the additional rounds.
 So the table supports a system view of FedOCR, not just an accuracy view: the pre-training filter is the main lever for cutting cost, while downstream correction is a conditional refinement.
 
-We also test whether the conclusion changes with the strength of Non-IID partitioning.
+As shown in table\ref{tab:noniid_robustness}, we also test whether the conclusion changes with the strength of Non-IID partitioning.
 Table~\ref{tab:noniid_robustness} reports the CIFAR-10 results under linear noise for $\alpha\in\{0.1,0.5,1.0\}$.
 The interesting trend here is not just that FedOCR stays competitive, but that its advantage is largest when heterogeneity becomes most hostile.
 As the partition becomes less extreme, all methods improve, but FedOCR remains near the top and wins at the two ends of the range, which suggests that its client-block filtering is especially useful when the learning problem is dominated by skew and corruption rather than by mild heterogeneity alone.
-FedGreed leading at the middle point is also informative: when the data are heterogeneous but not yet severely corrupted, utility-based selection can be enough to exploit diversity.
-FedOCR, in contrast, is designed for the harder regime where reliability filtering matters more than diversity alone.
-So the sweep says that FedOCR is not a narrow fix for one partition strength; it is most valuable when the partition is both noisy and skewed enough that cleaning the pool matters as much as choosing it.
 \begin{table*}[!t]
 	\centering
 	\caption{Cost comparison at matched target accuracy. For each scenario, the reference method is selected as a representative strong baseline from the three baseline families considered in Table~\ref{tab:noisy_fl_accuracy}, including full-round robust training baselines, training-stage correction baselines, and client-selection baselines. Computation is reported in $10^6$ FEP and communication in GB. Saving denotes the computation / communication reduction of FedOCR-based methods relative to the corresponding reference method. Negative values indicate higher cost than the reference method. Best and second-best costs within each scenario are highlighted in bold and underlined, respectively.}
@@ -968,19 +965,20 @@ So the figure is not just tuning advice; it shows that FedOCR behaves like a bal
 \end{figure}
 
 For the strength coefficient, the best result is obtained at strength $=1$; smaller values keep too many risky clients, whereas larger values over-prune the pool and reduce accuracy.
-For the first-round epoch budget, 10 epochs give the most useful filtering indicators: too few epochs make the signal weak, while too many epochs make the admission step overly permissive.
+For the first-round epoch budget, 10 epochs give the most useful filtering indicators: too few epochs under-adapt the client models and yield noisy entropy estimates, whereas too many epochs make even risky clients overconfident on the probing set, shrinking the entropy gap and making the admission rule overly permissive.
 For $\eta$, the default range $[0.10,0.30]$ selects 20 clients and achieves the best accuracy; smaller ranges keep too many noisy clients, while larger ranges become too strict.
 Additional client-pool-size curves are provided in Appendix Fig.~\ref{fig:screening}.
 
 \paragraph{\textbf{Probing-set sensitivity}}
-Beyond the admission hyperparameters, the probing set itself is another important design knob because its input samples determine the observable entropy and probing-predicted coverage signals used by FedOCR.
+This table primarily tests how demanding the probing set itself is.
 Table~\ref{tab:probing_set_sensitivity} reports probing-set configurations on CIFAR-10~\cite{krizhevsky2009learning} under the same linear-noise setting used in the dedicated probe study (\emph{ResNet18}, $\alpha=0.5$, and $\eta\in[0.1,0.3]$).
 All runs use a fixed random seed, so identical rows mean that FedOCR selected the same client set and followed the same training trajectory rather than exhibiting a reporting artifact.
-The size sweep shows that the probing set behaves like a signal budget rather than a training set: if it is too small, the entropy and coverage estimates become noisy; if it is too large, the admission stage spends more scans without improving the ranking.
-The Dirichlet sweep tells a complementary story: what matters is not that the probe be perfectly IID, but that it exposes enough class support for the KL-based coverage signal to remain discriminative.
-The label-noise sweep is flat by design, because FedOCR never consumes the probing labels at all.
-That invariance is important: it confirms that the probe contributes through its inputs and class coverage only, so label corruption on the unused annotations cannot perturb the retained client set.
-Taken together, the table says that FedOCR is sensitive to the informative part of the probing set, but intentionally blind to the labels it does not use.
+The size sweep is the key result: even a 1\% probing set, which corresponds to only 100 images or about 10 images per class, keeps accuracy in a very tight band and only slightly below the best 5\% setting.
+This shows that FedOCR does not need a large clean probe to work well, so the data-collection cost of the probing set is low.
+The Dirichlet sweep shows a smaller but still visible effect: mild changes in the probing input distribution slightly perturb accuracy and the retained count, which means the probe does not need to be perfectly IID, only sufficiently class-covering for the KL signal to stay useful.
+The label-noise sweep is exactly flat because FedOCR never consumes the probing labels at all.
+This is the strongest practical takeaway: probe-label quality is not a real requirement for FedOCR, so label corruption on the unused annotations does not change the selected clients, the training trajectory, or the final accuracy.
+Taken together, the table says that FedOCR is robust to probe size, tolerant to mild probe distribution shift, and invariant to probing-set label noise, which greatly lowers the practical difficulty of building the probing set.
 \begin{table}[!t]
 	\centering
 	\caption{FedOCR probing-set sensitivity on CIFAR-10~\cite{krizhevsky2009learning} under linear heterogeneous noise. Results are reported as the last five rounds' mean$\pm$standard deviation, together with the final retained client count and the number of sample scans used by the admission stage.}
