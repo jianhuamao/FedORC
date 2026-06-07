@@ -1,0 +1,799 @@
+
+
+@inproceedings{fedprox,
+  author    = {Tian Li and Anit Kumar Sahu and Manzil Zaheer and Maziar Sanjabi and Ameet Talwalkar and Virginia Smith},
+  title     = {Federated Optimization in Heterogeneous Networks},
+  booktitle = {Proceedings of Machine Learning and Systems},
+  volume    = {2},
+  year      = {2020},
+  publisher = {MLSys},
+  url       = {https://proceedings.mlsys.org/paper_files/paper/2020/hash/1f5fe83998a09396ebe6477d9475ba0c-Abstract.html}
+}
+
+@inproceedings{scaffold,
+  author    = {Sai Praneeth Karimireddy and Satyen Kale and Mehryar Mohri and Sashank Reddi and Sebastian Stich and Ananda Theertha Suresh},
+  title     = {SCAFFOLD: Stochastic Controlled Averaging for Federated Learning},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {119},
+  pages     = {5132--5143},
+  year      = {2020},
+  publisher = {PMLR},
+  url       = {https://proceedings.mlr.press/v119/karimireddy20a.html}
+}
+
+@inproceedings{krum,
+  author    = {Peva Blanchard and El Mahdi El Mhamdi and Rachid Guerraoui and Julien Stainer},
+  title     = {Machine Learning with Adversaries: Byzantine Tolerant Gradient Descent},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+  pages     = {118--128},
+  year      = {2017},
+  publisher = {Curran Associates, Inc.},
+  url       = {https://proceedings.neurips.cc/paper/2017/hash/f4b9ec30ad9f68f89b29639786cb62ef-Abstract.html}
+}
+
+@inproceedings{bulyan,
+  author    = {El Mahdi El-Mhamdi and Rachid Guerraoui and Sebastien Rouault},
+  title     = {The Hidden Vulnerability of Distributed Learning in Byzantium},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {80},
+  pages     = {3521--3530},
+  year      = {2018},
+  publisher = {PMLR},
+  url       = {https://proceedings.mlr.press/v80/mhamdi18a.html}
+}
+
+@article{ACFL,
+  title = {Active {{Client Selection}} for {{Clustered Federated Learning}}},
+  author = {Huang, Honglan and Shi, Wei and Feng, Yanghe and Niu, Chaoyue and Cheng, Guangquan and Huang, Jincai and Liu, Zhong},
+  year = 2024,
+  month = nov,
+  journal = {IEEE Transactions on Neural Networks and Learning Systems},
+  volume = {35},
+  number = {11},
+  pages = {16424--16438},
+  issn = {2162-237X, 2162-2388},
+  doi = {10.1109/TNNLS.2023.3294295},
+  urldate = {2026-02-13},
+  abstract = {Federated learning (FL) is an emerging distributed machine learning (ML) framework that operates under privacy and communication constraints. To mitigate the data heterogeneity underlying FL, clustered FL (CFL) was proposed to learn customized models for different client groups. However, due to the lack of effective client selection strategies, the CFL process is relatively slow, and the model performance is also limited in the presence of nonindependent and identically distributed (non-IID) client data. In this work, for the first time, we propose selecting participating clients for each cluster with active learning (AL) and call our method active client selection for CFL (ACFL). More specifically, in each ACFL round, each cluster filters out a small set of clients, which are the most informative clients according to some AL metrics [e.g., uncertainty sampling, queryby-committee (QBC), loss], and aggregates only its model updates to update the cluster-specific model. We empirically evaluate our ACFL approach on the public MNIST, CIFAR-10, and LEAF synthetic datasets with class-imbalanced settings. Compared with several FL and CFL baselines, the results reveal that ACFL can dramatically speed up the learning process while requiring less client participation and significantly improving model accuracy with a relatively low communication overhead.},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  langid = {english},
+  annotation = {GSCC: 0000080 2026-02-13T02:54:14.896Z 0},
+  file = {/Users/hua/Zotero/storage/QRTNJCLL/Huang 等 - 2024 - Active Client Selection for Clustered Federated Learning.pdf}
+}
+
+@article{kairouz2021advances,
+  title   = {Advances and Open Problems in Federated Learning},
+  author  = {Kairouz, Peter and McMahan, H. Brendan and Avent, Brendan and others},
+  journal = {Foundations and Trends in Machine Learning},
+  volume  = {14},
+  number  = {1--2},
+  pages   = {1--210},
+  year    = {2021}
+}
+
+@inproceedings{cho2022power,
+  title     = {Towards Understanding Biased Client Selection in Federated Learning},
+  author    = {Cho, Yae Jee and Wang, Jianyu and Joshi, Gauri},
+  booktitle = {Proceedings of the 25th International Conference on Artificial Intelligence and Statistics (AISTATS)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {151},
+  pages     = {10351--10375},
+  year      = {2022}
+}
+
+@inproceedings{tang2022fedcor,
+  title     = {FedCor: Correlation-Based Active Client Selection Strategy for Heterogeneous Federated Learning},
+  author    = {Tang, Minxue and Ning, Xuefei and Wang, Yitu and Sun, Jingwei and Wang, Yu and Li, Hai and Chen, Yiran},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {10144--10153},
+  year      = {2022}
+}
+
+@article{ben2010theory,
+  title   = {A Theory of Learning from Different Domains},
+  author  = {Ben-David, Shai and Blitzer, John and Crammer, Koby and Kulesza, Alex and Pereira, Fernando and Vaughan, Jennifer Wortman},
+  journal = {Machine Learning},
+  volume  = {79},
+  number  = {1--2},
+  pages   = {151--175},
+  year    = {2010}
+}
+
+@inproceedings{natarajan2013learning,
+  title     = {Learning with Noisy Labels},
+  author    = {Natarajan, Nagarajan and Dhillon, Inderjit S. and Ravikumar, Pradeep K. and Tewari, Ambuj},
+  booktitle = {Advances in Neural Information Processing Systems 26 (NeurIPS)},
+  year      = {2013}
+}
+
+@inproceedings{mcmahan2017communication,
+  title     = {Communication-Efficient Learning of Deep Networks from Decentralized Data},
+  author    = {McMahan, H. Brendan and Moore, Eider and Ramage, Daniel and Hampson, Seth and Aguera y Arcas, Blaise},
+  booktitle = {Proceedings of the 20th International Conference on Artificial Intelligence and Statistics (AISTATS)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {54},
+  pages     = {1273--1282},
+  year      = {2017}
+}
+
+@inproceedings{li2020federated,
+  title     = {Federated Optimization in Heterogeneous Networks},
+  author    = {Li, Tian and Sahu, Anit Kumar and Zaheer, Manzil and Sanjabi, Maziar and Talwalkar, Ameet and Smith, Virginia},
+  booktitle = {Proceedings of Machine Learning and Systems (MLSys)},
+  volume    = {2},
+  pages     = {429--450},
+  year      = {2020}
+}
+
+@inproceedings{karimireddy2020scaffold,
+  title     = {SCAFFOLD: Stochastic Controlled Averaging for Federated Learning},
+  author    = {Karimireddy, Sai Praneeth and Kale, Satyen and Mohri, Mehryar and Reddi, Sashank J. and Stich, Sebastian U. and Suresh, Ananda Theertha},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {119},
+  pages     = {5132--5143},
+  year      = {2020}
+}
+
+@article{hsu2019measuring,
+  title   = {Measuring the Effects of Non-Identical Data Distribution for Federated Visual Classification},
+  author  = {Hsu, Tzu-Ming Harry and Qi, Hang and Brown, Matthew},
+  journal = {arXiv preprint arXiv:1909.06335},
+  year    = {2019}
+}
+
+@inproceedings{khaled2020convergence,
+  title     = {On the Convergence of {FedAvg} on Non-{IID} Data},
+  author    = {Khaled, Ahmed and Mishchenko, Konstantin and Richt{\'a}rik, Peter},
+  booktitle = {International Conference on Learning Representations Workshop Track},
+  year      = {2020}
+}
+
+@article{zhu2021survey,
+  title   = {Federated Learning on Non-IID Data: A Survey},
+  author  = {Zhu, Hangyu and Xu, Jinjin and Liu, Shiqing and Jin, Yaochu},
+  journal = {Neurocomputing},
+  volume  = {465},
+  pages   = {371--390},
+  year    = {2021}
+}
+
+@article{li2021silos,
+  title   = {Federated Learning on Non-IID Data Silos: An Experimental Study},
+  author  = {Li, Qinbin and Diao, Yiqun and Chen, Quan and He, Bingsheng},
+  journal = {arXiv preprint arXiv:2102.02079},
+  year    = {2021}
+}
+
+@article{tsouvalas2022labeling,
+  title   = {Labeling Chaos to Learning Harmony: Federated Learning with Noisy Labels},
+  author  = {Tsouvalas, Vasileios and Saeed, Aaqib and Ozcelebi, Tanir and Meratnia, Nirvana},
+  journal = {ACM Transactions on Intelligent Systems and Technology},
+  volume  = {15},
+  number  = {2},
+  pages   = {1--26},
+  year    = {2024},
+  doi     = {10.1145/3626242},
+  url     = {https://doi.org/10.1145/3626242}
+}
+
+@inproceedings{xu2022fedcorr,
+  title     = {FedCorr: Multi-Stage Federated Learning for Label Noise Correction},
+  author    = {Xu, Jingyi and Chen, Zihan and Quek, Tony Q. S. and Chong, Kai Fong Ernest},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {10184--10193},
+  year      = {2022}
+}
+
+@article{liang2023fednoisy,
+  title   = {FedNoisy: Federated Noisy Label Learning Benchmark},
+  author  = {Liang, Siqi and Huang, Jintao and Hong, Junyuan and Zeng, Dun and Zhou, Jiayu and Xu, Zenglin},
+  journal = {arXiv preprint arXiv:2306.11650},
+  year    = {2023}
+}
+
+@article{fu2023client,
+  title   = {Client Selection in Federated Learning: Principles, Challenges, and Opportunities},
+  author  = {Fu, Lei and Zhang, Huanle and Gao, Ge and Zhang, Mi and Liu, Xin},
+  journal = {IEEE Internet of Things Journal},
+  volume  = {10},
+  number  = {24},
+  pages   = {21811--21819},
+  year    = {2023},
+  doi     = {10.1109/JIOT.2023.3299573},
+  url     = {https://doi.org/10.1109/JIOT.2023.3299573}
+}
+
+@article{almanifi2023communication,
+  title   = {Communication and computation efficiency in Federated Learning: A survey},
+  author  = {Almanifi, Omair Rashed Abdulwareth and Chow, Chee-Onn and Tham, Mau-Luen and Chuah, Joon Huang and Kanesan, Jeevan},
+  journal = {Internet of Things},
+  volume  = {22},
+  pages   = {100742},
+  year    = {2023},
+  doi     = {10.1016/j.iot.2023.100742},
+  url     = {https://doi.org/10.1016/j.iot.2023.100742}
+}
+
+@article{wen2023survey,
+  title   = {A survey on federated learning: challenges and applications},
+  author  = {Wen, Jie and Zhang, Zhixia and Lan, Yang and Cui, Zhihua and Cai, Jianghui and Zhang, Wensheng},
+  journal = {International Journal of Machine Learning and Cybernetics},
+  volume  = {14},
+  number  = {2},
+  pages   = {513--535},
+  year    = {2023},
+  doi     = {10.1007/s13042-022-01647-y},
+  url     = {https://doi.org/10.1007/s13042-022-01647-y}
+}
+
+@misc{le2024practicality,
+  title         = {Exploring the Practicality of Federated Learning: A Survey Towards the Communication Perspective},
+  author        = {Le, Khiem and Luong-Ha, Nhan and Nguyen-Duc, Manh and Le-Phuoc, Danh and Do, Cuong and Wong, Kok-Seng},
+  year          = {2024},
+  eprint        = {2405.20431},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.LG},
+  doi           = {10.48550/arXiv.2405.20431},
+  url           = {https://arxiv.org/abs/2405.20431}
+}
+
+@article{jia2025comst,
+  title   = {A Comprehensive Survey on Communication-Efficient Federated Learning in Mobile Edge Environments},
+  author  = {Jia, Ninghui and Qu, Zhihao and Ye, Baoliu and Wang, Yanyan and Hu, Shihong and Guo, Song},
+  journal = {IEEE Communications Surveys \& Tutorials},
+  year    = {2025},
+  doi     = {10.1109/COMST.2025.3535957},
+  url     = {https://doi.org/10.1109/COMST.2025.3535957}
+}
+
+@inproceedings{zhang2023dpp,
+  title     = {DPP-Based Client Selection for Federated Learning with Non-IID Data},
+  author    = {Zhang, Yuxuan and Xu, Chao and Yang, Howard H. and Wang, Xijun and Quek, Tony Q. S.},
+  booktitle = {ICASSP 2023 -- IEEE International Conference on Acoustics, Speech and Signal Processing},
+  pages     = {1--5},
+  year      = {2023}
+}
+
+@inproceedings{li2020fedprox,
+  author = {Li, Tian and Sahu, Anit Kumar and Zaheer, Manzil and Sanjabi, Maziar and Talwalkar, Ameet and Smith, Virginia},
+  title = {Federated Optimization in Heterogeneous Networks},
+  booktitle = {Proceedings of Machine Learning and Systems},
+  volume = {2},
+  pages = {429--450},
+  year = {2020}
+}
+
+@inproceedings{lai2021oort,
+  author = {Lai, Fan and Zhu, Xiangfeng and Madhyastha, Harsha V. and Chowdhury, Mosharaf},
+  title = {Oort: Efficient Federated Learning via Guided Participant Selection},
+  booktitle = {15th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI} 21)},
+  pages = {19--35},
+  year = {2021},
+  publisher = {{USENIX} Association},
+  url = {https://www.usenix.org/conference/osdi21/presentation/lai}
+}
+
+@InProceedings{sun2024stability,
+  title = {Understanding Generalization of Federated Learning via Stability: Heterogeneity Matters},
+  author = {Sun, Zhenyu and Niu, Xiaochun and Wei, Ermin},
+  booktitle = {Proceedings of The 27th International Conference on Artificial Intelligence and Statistics},
+  pages = {676--684},
+  year = {2024},
+  editor = {Dasgupta, Sanjoy and Mandt, Stephan and Li, Yingzhen},
+  volume = {238},
+  series = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v238/sun24a.html}
+}
+
+@InProceedings{lipton2018labelshift,
+  title = {Detecting and Correcting for Label Shift with Black Box Predictors},
+  author = {Lipton, Zachary and Wang, Yu-Xiang and Smola, Alexander},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning},
+  pages = {3122--3130},
+  year = {2018},
+  editor = {Dy, Jennifer and Krause, Andreas},
+  volume = {80},
+  series = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v80/lipton18a.html}
+}
+
+@inproceedings{natarajan2013noisy,
+  author = {Natarajan, Nagarajan and Dhillon, Inderjit S. and Ravikumar, Pradeep K. and Tewari, Ambuj},
+  title = {Learning with Noisy Labels},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume = {26},
+  pages = {1196--1204},
+  year = {2013}
+}
+
+@inproceedings{patrini2017loss,
+  author = {Patrini, Giorgio and Rozza, Alessandro and Menon, Aditya Krishna and Nock, Richard and Qu, Lizhen},
+  title = {Making Deep Neural Networks Robust to Label Noise: A Loss Correction Approach},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  pages = {1944--1952},
+  year = {2017}
+}
+
+@inproceedings{han2018coteaching,
+  author = {Han, Bo and Yao, Quanming and Yu, Xingrui and Niu, Gang and Xu, Miao and Hu, Weihua and Tsang, Ivor and Sugiyama, Masashi},
+  title = {Co-teaching: Robust Training of Deep Neural Networks with Extremely Noisy Labels},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume = {31},
+  pages = {8536--8546},
+  year = {2018}
+}
+
+@InProceedings{zhang2021nochange,
+  title = {Learning from Noisy Labels with No Change to the Training Process},
+  author = {Zhang, Mingyuan and Lee, Jane and Agarwal, Shivani},
+  booktitle = {Proceedings of the 38th International Conference on Machine Learning},
+  pages = {12468--12478},
+  year = {2021},
+  editor = {Meila, Marina and Zhang, Tong},
+  volume = {139},
+  series = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v139/zhang21k.html}
+}
+
+@article{northcutt2021confident,
+  author = {Northcutt, Curtis G. and Jiang, Lu and Chuang, Isaac L.},
+  title = {Confident Learning: Estimating Uncertainty in Dataset Labels},
+  journal = {Journal of Artificial Intelligence Research},
+  volume = {70},
+  pages = {1373--1411},
+  year = {2021},
+  url = {https://www.jair.org/index.php/jair/article/view/12125}
+}
+
+@InProceedings{koh2017influence,
+  title = {Understanding Black-box Predictions via Influence Functions},
+  author = {Koh, Pang Wei and Liang, Percy},
+  booktitle = {Proceedings of the 34th International Conference on Machine Learning},
+  pages = {1885--1894},
+  year = {2017},
+  editor = {Precup, Doina and Teh, Yee Whye},
+  volume = {70},
+  series = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v70/koh17a.html}
+}
+
+@article{nemhauser1978submodular,
+  author = {Nemhauser, George L. and Wolsey, Laurence A. and Fisher, Marshall L.},
+  title = {An Analysis of Approximations for Maximizing Submodular Set Functions---I},
+  journal = {Mathematical Programming},
+  volume = {14},
+  pages = {265--294},
+  year = {1978},
+  doi = {10.1007/BF01588971},
+  url = {https://link.springer.com/article/10.1007/BF01588971}
+}
+
+@incollection{krause2014submodular,
+  author = {Krause, Andreas and Golovin, Daniel},
+  title = {Submodular Function Maximization},
+  booktitle = {Tractability: Practical Approaches to Hard Problems},
+  editor = {Bordeaux, Lucas and Hamadi, Youssef and Kohli, Pushmeet and Kappes, Andrea},
+  pages = {71--104},
+  publisher = {Cambridge University Press},
+  year = {2014}
+}
+
+@inproceedings{feldman2011coreset,
+  author = {Feldman, Dan and Langberg, Michael},
+  title = {A Unified Framework for Approximating and Clustering Data},
+  booktitle = {Proceedings of the Forty-Third Annual ACM Symposium on Theory of Computing},
+  pages = {569--578},
+  year = {2011},
+  doi = {10.1145/1993636.1993712},
+  url = {https://dl.acm.org/doi/10.1145/1993636.1993712}
+}
+
+@inproceedings{sener2018coreset,
+  author = {Sener, Ozan and Savarese, Silvio},
+  title = {Active Learning for Convolutional Neural Networks: A Core-Set Approach},
+  booktitle = {International Conference on Learning Representations},
+  year = {2018},
+  url = {https://openreview.net/forum?id=H1aIuk-RW}
+}
+
+@InProceedings{yang2023crest,
+  title = {Towards Sustainable Learning: Coresets for Data-efficient Deep Learning},
+  author = {Yang, Yu and Kang, Hao and Mirzasoleiman, Baharan},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+  pages = {39314--39330},
+  year = {2023},
+  editor = {Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan},
+  volume = {202},
+  series = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v202/yang23g.html}
+}
+
+@InProceedings{yang2024mind,
+  title = {Mind the Boundary: Coreset Selection via Reconstructing the Decision Boundary},
+  author = {Yang, Shuo and Cao, Zhe and Guo, Sheng and Zhang, Ruiheng and Luo, Ping and Zhang, Shengping and Nie, Liqiang},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning},
+  pages = {55948--55960},
+  year = {2024},
+  editor = {Salakhutdinov, Ruslan and Kolter, Zico and Heller, Katherine and Weller, Adrian and Oliver, Nuria and Scarlett, Jonathan and Berkenkamp, Felix},
+  volume = {235},
+  series = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v235/yang24b.html}
+}
+
+@inproceedings{feldman2011unified,
+  title={A Unified Framework for Approximating and Clustering Data},
+  author={Feldman, Dan and Langberg, Michael},
+  booktitle={Proceedings of the Forty-Third Annual ACM Symposium on Theory of Computing},
+  pages={569--578},
+  year={2011}
+}
+
+@article{bachem2017practical,
+  title={Practical Coreset Constructions for Machine Learning},
+  author={Bachem, Olivier and Lucic, Mario and Krause, Andreas},
+  journal={arXiv preprint arXiv:1703.06476},
+  year={2017}
+}
+
+@inproceedings{huggins2016coresets,
+  title={Coresets for Scalable Bayesian Logistic Regression},
+  author={Huggins, Jonathan H. and Campbell, Trevor and Broderick, Tamara},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={29},
+  year={2016}
+}
+
+@article{boutsidis2013near,
+  title={Near-Optimal Coresets for Least-Squares Regression},
+  author={Boutsidis, Christos and Drineas, Petros and Magdon-Ismail, Malik},
+  journal={IEEE Transactions on Information Theory},
+  volume={59},
+  number={10},
+  pages={6880--6892},
+  year={2013},
+  publisher={IEEE}
+}
+
+@inproceedings{mirzasoleiman2020robustcoresets,
+  title={Coresets for Robust Training of Neural Networks against Noisy Labels},
+  author={Mirzasoleiman, Baharan and Cao, Kaidi and Leskovec, Jure},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={11465--11477},
+  year={2020}
+}
+
+@inproceedings{braverman2021efficient,
+  title={Efficient Coreset Constructions via Sensitivity Sampling},
+  author={Braverman, Vladimir and Feldman, Dan and Lang, Harry},
+  booktitle={Proceedings of the 38th International Conference on Machine Learning},
+  pages={992--1002},
+  year={2021},
+  organization={PMLR}
+}
+
+@article{huang2022near,
+  title={Near-optimal Coresets for Robust Clustering},
+  author={Huang, Lingxiao and Jiang, Shaofeng H.-C. and Li, Jian and Wu, Xuan},
+  journal={arXiv preprint arXiv:2210.10394},
+  year={2022}
+}
+
+@inproceedings{hao2025fedcs,
+  title={{FedCS}: Coreset Selection for Federated Learning},
+  author={Hao, Chenhe and Xie, Weiying and Li, Daixun and Qin, Haonan and Ye, Hangyu and Fang, Leyuan and Li, Yunsong},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2025}
+}
+
+@article{hossen2026scope,
+  title={{SCOPE}: Semantic Coreset with Orthogonal Projection Embeddings for Federated Learning},
+  author={Hossen, Md Anwar and Tallent, Nathan R. and Guo, Luanzheng and Jannesary, Ali},
+  journal={arXiv preprint arXiv:2603.12976},
+  year={2026}
+}
+
+@article{shi2024medicalnoise,
+  title={A Survey of Label-Noise Deep Learning for Medical Image Analysis},
+  author={Shi, Jiaxin and others},
+  journal={Medical Image Analysis},
+  year={2024}
+}
+
+@inproceedings{wu2023fednoro,
+  title     = {FedNoRo: Towards Noise-Robust Federated Learning by Addressing Class Imbalance and Label Noise Heterogeneity},
+  author    = {Wu, Nannan and Yu, Li and Jiang, Xuefeng and Cheng, Kwang-Ting and Yan, Zengqiang},
+  booktitle = {Proceedings of the Thirty-Second International Joint Conference on Artificial Intelligence},
+  pages     = {4424--4432},
+  year      = {2023},
+  doi       = {10.24963/ijcai.2023/492},
+  url       = {https://doi.org/10.24963/ijcai.2023/492}
+}
+
+@inproceedings{yu2019coteachingplus,
+  title={How Does Disagreement Help Generalization against Label Corruption?},
+  author={Yu, Xingrui and Han, Bo and Yao, Jiangchao and Niu, Gang and Tsang, Ivor W. and Sugiyama, Masashi},
+  booktitle={Proceedings of the 36th International Conference on Machine Learning},
+  pages={7164--7173},
+  year={2019},
+  organization={PMLR}
+}
+
+@inproceedings{ma2021client,
+  title={Client Selection Based on Label Quantity Information for Federated Learning},
+  author={Ma, Jiahua and Sun, Xinghua and Xia, Wenchao and Wang, Xijun and Chen, Xiang and Zhu, Hongbo},
+  booktitle={2021 IEEE 32nd Annual International Symposium on Personal, Indoor and Mobile Radio Communications (PIMRC)},
+  pages={1--6},
+  year={2021},
+  publisher={IEEE},
+  doi={10.1109/PIMRC50174.2021.9569487}
+}
+
+@inproceedings{kumar2010selfpaced,
+  title={Self-Paced Learning for Latent Variable Models},
+  author={Kumar, M. Pawan and Packer, Benjamin and Koller, Daphne},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={23},
+  year={2010}
+}
+
+@inproceedings{jiang2015selfpaced,
+  title={Self-Paced Curriculum Learning},
+  author={Jiang, Lu and Meng, Deyu and Zhao, Qian and Shan, Shiguang and Hauptmann, Alexander G.},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={29},
+  number={1},
+  year={2015}
+}
+
+@inproceedings{guo2017calibration,
+  title={On Calibration of Modern Neural Networks},
+  author={Guo, Chuan and Pleiss, Geoff and Sun, Yu and Weinberger, Kilian Q.},
+  booktitle={Proceedings of the 34th International Conference on Machine Learning},
+  pages={1321--1330},
+  year={2017}
+}
+
+@article{audenaert2007sharp,
+  title={A Sharp Continuity Estimate for the von Neumann Entropy},
+  author={Audenaert, Koenraad M. R.},
+  journal={Journal of Physics A: Mathematical and Theoretical},
+  volume={40},
+  number={28},
+  pages={8127--8136},
+  year={2007}
+}
+
+@inproceedings{jiang2014spld,
+  title={Self-Paced Learning with Diversity},
+  author={Jiang, Lu and Meng, Deyu and Yu, Shoou-I and Lan, Zhenzhong and Shan, Shiguang and Hauptmann, Alexander G.},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={27},
+  year={2014}
+}
+
+@inproceedings{bendavid2006analysis,
+  title={Analysis of Representations for Domain Adaptation},
+  author={Ben-David, Shai and Blitzer, John and Crammer, Koby and Pereira, Fernando},
+  booktitle={Advances in Neural Information Processing Systems},
+  volume={19},
+  year={2006}
+}
+
+@article{gibbs2002choosing,
+  title={On Choosing and Bounding Probability Metrics},
+  author={Gibbs, Alison L. and Su, Francis Edward},
+  journal={International Statistical Review},
+  volume={70},
+  number={3},
+  pages={419--435},
+  year={2002}
+}
+
+@article{morafah2024clipfl,
+author = {Morafah, Mahdi and Chang, Hojin and Chen, Chen and Lin, Bill},
+title = {Federated Learning Client Pruning for Noisy Labels},
+year = {2025},
+issue_date = {June 2025},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {10},
+number = {2},
+issn = {2376-3639},
+url = {https://doi.org/10.1145/3706058},
+doi = {10.1145/3706058},
+abstract = {Federated Learning (FL) enables collaborative model training across decentralized edge devices while preserving data privacy. However, existing FL methods often assume clean annotated datasets, which are impractical for resource-constrained edge devices. In reality, noisy labels are prevalent, posing significant challenges to FL performance. Prior approaches attempt label correction and robust training techniques but exhibit limited efficacy, particularly under high noise levels. This article introduces ClipFL (Federated Learning Client Pruning), a novel framework addressing noisy labels from a fresh perspective. ClipFL identifies and excludes noisy clients based on their performance on a clean validation dataset, tracked using a Noise Candidacy Score (NCS). The framework includes three phases: pre-client pruning to identify potential noisy clients and calculate their NCS, client pruning to exclude a percentage of clients with the highest NCS, and post-client pruning for fine-tuning the global model with standard FL on clean clients. Empirical evaluation demonstrates ClipFL’s efficacy across diverse datasets and noise levels, achieving accurate noisy client identification, superior performance, faster convergence, and reduced communication costs compared to state-of-the-art FL methods. Our code is available at&nbsp;.},
+journal = {ACM Trans. Model. Perform. Eval. Comput. Syst.},
+month = may,
+articleno = {8},
+numpages = {25},
+keywords = {Federated learning, noisy labels, noisy clients, client pruning}
+}
+
+@article{cho2026fedenlc,
+  title   = {FedENLC: An End-to-End Noisy Label Correction Framework in Federated Learning},
+  author  = {Cho, Yeji and Kim, Junghyun},
+  journal = {Mathematics},
+  volume  = {14},
+  number  = {2},
+  pages   = {290},
+  year    = {2026},
+  doi     = {10.3390/math14020290},
+  url     = {https://doi.org/10.3390/math14020290}
+}
+
+@book{pinsker1964information,
+  title     = {Information and Information Stability of Random Variables and Processes},
+  author    = {Pinsker, Mark S.},
+  year      = {1964},
+  publisher = {Holden-Day},
+  address   = {San Francisco}
+}
+
+@article{csiszar1967information,
+  title   = {Information-Type Measures of Difference of Probability Distributions and Indirect Observations},
+  author  = {Csisz{\'a}r, Imre},
+  journal = {Studia Scientiarum Mathematicarum Hungarica},
+  volume  = {2},
+  pages   = {299--318},
+  year    = {1967}
+}
+
+@article{rieke2020future,
+  title   = {The Future of Digital Health with Federated Learning},
+  author  = {Rieke, Nicola and Hancox, Jonny and Li, Wenqi and Milletari, Fausto and Roth, Holger R. and Albarqouni, Shadi and Bakas, Spyridon and Galtier, Mathieu N. and Landman, Bennett and Maier-Hein, Klaus and Ourselin, Sebastien and Sheller, Micah and Summers, Ronald M. and Trask, Andrew and Xu, Daguang and Baust, Maximilian and Cardoso, M. Jorge},
+  journal = {npj Digital Medicine},
+  volume  = {3},
+  number  = {1},
+  pages   = {119},
+  year    = {2020},
+  doi     = {10.1038/s41746-020-00323-1}
+}
+
+@article{rehman2023federated,
+  title   = {Federated Learning for Medical Imaging Radiology: A Review},
+  author  = {Rehman, Muhammad Habib ur and Pinaya, Walter Hugo Lopez and Nachev, Parashkev and Teo, James T. and Ourselin, Sebastien and Cardoso, M. Jorge},
+  journal = {The British Journal of Radiology},
+  volume  = {96},
+  number  = {1150},
+  pages   = {20220890},
+  year    = {2023},
+  doi     = {10.1259/bjr.20220890}
+}
+
+@article{sandhu2023medical,
+  title   = {Medical Imaging Applications of Federated Learning},
+  author  = {Sandhu, Sukhveer Singh and Gorji, Hamed Taheri and Tavakolian, Pantea and Tavakolian, Kouhyar and Akhbardeh, Arash},
+  journal = {Diagnostics},
+  volume  = {13},
+  number  = {19},
+  pages   = {3140},
+  year    = {2023},
+  doi     = {10.3390/diagnostics13193140}
+}
+
+@article{yang2023medmnist,
+  title   = {{MedMNIST} v2: A Large-Scale Lightweight Benchmark for 2D and 3D Biomedical Image Classification},
+  author  = {Yang, Jiancheng and Shi, Rui and Wei, Donglai and Liu, Zequan and Zhao, Lin and Ke, Bilian and Pfister, Hanspeter and Ni, Bingbing},
+  journal = {Scientific Data},
+  volume  = {10},
+  number  = {1},
+  pages   = {41},
+  year    = {2023},
+  doi     = {10.1038/s41597-022-01721-8}
+}
+
+@techreport{krizhevsky2009learning,
+  title       = {Learning Multiple Layers of Features from Tiny Images},
+  author      = {Krizhevsky, Alex},
+  institution = {University of Toronto},
+  year        = {2009}
+}
+
+@inproceedings{deng2009imagenet,
+  title     = {{ImageNet}: A Large-Scale Hierarchical Image Database},
+  author    = {Deng, Jia and Dong, Wei and Socher, Richard and Li, Li-Jia and Li, Kai and Fei-Fei, Li},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  pages     = {248--255},
+  year      = {2009}
+}
+
+@misc{le2015tinyimagenet,
+  title        = {{Tiny ImageNet} Visual Recognition Challenge},
+  author       = {Le, Ya and Yang, Xuan S.},
+  howpublished = {CS231N course project dataset},
+  year         = {2015}
+}
+
+@inproceedings{li2024feddiv,
+  title     = {FedDiv: Collaborative Noise Filtering for Federated Learning with Noisy Labels},
+  author    = {Li, Jichang and Li, Guanbin and Cheng, Hui and Liao, Zicheng and Yu, Yizhou},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {38},
+  number    = {4},
+  pages     = {3118--3126},
+  year      = {2024},
+  doi       = {10.1609/aaai.v38i4.28095}
+}
+
+@inproceedings{ji2024fedfixer,
+  title     = {FedFixer: Mitigating Heterogeneous Label Noise in Federated Learning},
+  author    = {Ji, Xinyuan and Zhu, Zhaowei and Xi, Wei and Gadyatskaya, Olga and Song, Zilong and Cai, Yong and Liu, Yang},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  year      = {2024}
+}
+
+@article{pillutla2022robust,
+  author  = {Pillutla, Krishna and Kakade, Sham M. and Harchaoui, Zaid},
+  title   = {Robust Aggregation for Federated Learning},
+  journal = {IEEE Transactions on Signal Processing},
+  year    = {2022},
+  volume  = {70},
+  pages   = {1142--1154},
+  doi     = {10.1109/TSP.2022.3153135}
+}
+
+@inproceedings{yin2018byzantine,
+  title     = {{B}yzantine-Robust Distributed Learning: Towards Optimal Statistical Rates},
+  author    = {Yin, Dong and Chen, Yudong and Kannan, Ramchandran and Bartlett, Peter},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning},
+  pages     = {5650--5659},
+  year      = {2018},
+  volume    = {80},
+  series    = {Proceedings of Machine Learning Research},
+  publisher = {PMLR}
+}
+
+@inproceedings{cao2021fltrust,
+  title     = {{FLTrust}: {B}yzantine-Robust Federated Learning via Trust Bootstrapping},
+  author    = {Cao, Xiaoyu and Fang, Minghong and Liu, Jia and Gong, Neil Zhenqiang},
+  booktitle = {Proceedings of the Network and Distributed System Security Symposium},
+  year      = {2021}
+}
+
+@article{rousseeuw1984least,
+  title   = {Least Median of Squares Regression},
+  author  = {Rousseeuw, Peter J.},
+  journal = {Journal of the American Statistical Association},
+  volume  = {79},
+  number  = {388},
+  pages   = {871--880},
+  year    = {1984},
+  doi     = {10.1080/01621459.1984.10477105}
+}
+
+@article{kritharakis2025fedgreed,
+  title   = {{FedGreed}: A {B}yzantine-Robust Loss-Based Aggregation Method for Federated Learning},
+  author  = {Kritharakis, Emmanouil and Makris, Antonios and Jakovetic, Dusan and Tserpes, Konstantinos},
+  journal = {arXiv preprint arXiv:2508.18060},
+  year    = {2025}
+}
+
+@inproceedings{xu2025lasa,
+  title     = {Achieving {B}yzantine-Resilient Federated Learning via Layer-Adaptive Sparsified Model Aggregation},
+  author    = {Xu, Jiahao and Zhang, Zikai and Hu, Rui},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+  pages     = {1508--1517},
+  year      = {2025}
+}
+
+@inproceedings{lu2024fedned,
+  title     = {Federated Learning with Extremely Noisy Clients via Negative Distillation},
+  author    = {Lu, Yang and Chen, Lin and Zhang, Yonggang and Zhang, Yiliang and Han, Bo and Cheung, Yiu-ming and Wang, Hanzi},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {38},
+  number    = {13},
+  pages     = {14184--14192},
+  year      = {2024},
+  doi       = {10.1609/aaai.v38i13.29329}
+}
+
