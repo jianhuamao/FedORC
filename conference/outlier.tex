@@ -984,7 +984,7 @@ FedOCR works best in the middle, which is what we want from an admission rule.
     \label{fig:hyperparameter_sensitivity}
 \end{figure}
 
-For the strength coefficient, the best result is obtained at strength $=1$; weaker filtering leaves the admission gate too open and retains risky clients, while stronger filtering becomes too aggressive and removes useful ones.
+For the strength coefficient, the best result is obtained at strength $=1$; this coefficient controls how strongly the selector shifts the greedy utility between distribution coverage and reliability according to the pool-level entropy profile. A smaller value keeps the balance closer to the default setting and gives noisy clients too much influence, while a larger value overreacts to the entropy signal and can tilt the greedy ranking away from useful clients.
 For the first-round epoch budget, 10 epochs give the clearest filtering signal: shorter runs underfit the entropy estimate, while longer runs let even risky clients adapt too much to the probing set and blur the gap between reliable and risky clients.
 For $\eta$, the default range $[0.10,0.30]$ selects 20 clients and achieves the best accuracy; a narrower range is too permissive and lets noisy clients slip through, while a wider range is too restrictive and drops useful clients.
 Additional client-pool-size curves are provided in the supplementary material.
@@ -1101,7 +1101,7 @@ FedOCR is a pre-training admission module: it removes risky client blocks before
 
 \textbf{Probe dependence.} FedOCR relies on a clean server-held probing set~\cite{mcmahan2017communication,kairouz2021advances}. The set does not need to be large, but it does need to be roughly target-relevant and refreshed when the deployment domain drifts. So FedOCR is robust to moderate probing mismatch, not arbitrary mismatch.
 
-\textbf{Privacy boundary.} FedOCR is privacy-compatible, but it is not a formal privacy-preserving protocol. Although the probing set itself does not expose client data, server-client interaction may still leak coarse distributional information. A malicious server could, in principle, craft probing samples to infer whether a client contains certain classes or patterns. Stronger privacy defenses, such as differentially private entropy estimation, probe sanitization, encrypted probing, and secure evaluation, are left for future work.
+\textbf{Privacy boundary.} FedOCR is privacy-compatible, but it is not a formal privacy-preserving protocol. Although the probing set itself does not expose client data, server-client interaction may still leak coarse distributional information. A malicious server could, in principle, craft probing samples to infer whether a client contains certain classes or patterns. Stronger privacy defenses, such as differentially private entropy estimation~\cite{suresh2019dpanonymizedhistograms,to2019dplocationentropy}, probe sanitization via privacy-preserving data cleaning~\cite{krishnan2016privateclean}, and encrypted or secure evaluation via similarity and homomorphic-encryption protocols~\cite{blundo2014espresso,shen2024mkfhe,zhao2023treeinference}, are left for future work.
 
 Future work will also study more robust probing construction under domain shift, online updates for changing client populations, and when downstream correction is worth the extra communication and computation cost.
 
