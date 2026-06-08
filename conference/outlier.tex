@@ -898,7 +898,7 @@ This means the theory is not just abstract: it ranks the oracle retained sets in
 In this section, we first present a controlled oracle experiment to validate our theoretical analysis. We then evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.	
 \paragraph{\textbf{Experimental setup}}
 We evaluate FedOCR on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}. 
-Unless otherwise specified, the training data are distributed over $N=50$ clients, and $K=20$ clients are selected for each federated training run. 
+Unless otherwise specified, the training data are distributed over $N=50$ clients. 
 We simulate Non-IID data using Dirichlet partitioning with concentration parameter $\alpha=0.5$ and a step-imbalance ratio of 5~\cite{hsu2019measuring,li2021silos,zhu2021survey}. 
 Client-level symmetric label noise is then injected following standard noisy-label robustness protocols~\cite{natarajan2013learning,patrini2017loss,liang2023fednoisy}. 
 We consider two heterogeneous noise modes: \textit{linear noise}, where client noise rates are evenly spaced in $[0,1]$, and \textit{Gaussian noise}, where rates are drawn from $\mathcal{N}(0.3,0.15^2)$ and clipped to $[0,1]$. 
@@ -915,7 +915,7 @@ We compare against three baseline families:
 	\setlength{\parsep}{0pt}
 	\item \textbf{Full-round robust training baselines:} RFA~\cite{pillutla2022robust}, FedGreed~\cite{kritharakis2025fedgreed}, LASA~\cite{xu2025lasa}, FedNed~\cite{lu2024fedned}, and FedNoRo~\cite{wu2023fednoro}.
 	\item \textbf{Training-stage correction baselines:} FedCorr~\cite{xu2022fedcorr}, FedCS~\cite{hao2025fedcs}, FedFixer~\cite{ji2024fedfixer}, and FedDiv~\cite{li2024feddiv}.
-	\item \textbf{Client-selection baselines:} All, RS, EMD, GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
+	\item \textbf{Client-selection baselines:} GS~\cite{ma2021client}, PoC~\cite{cho2022power}, and FedCor~\cite{tang2022fedcor}.
 \end{itemize}
 
 \paragraph{\textbf{Comparison with baselines}}
@@ -984,9 +984,9 @@ FedOCR works best in the middle, which is what we want from an admission rule.
     \label{fig:hyperparameter_sensitivity}
 \end{figure}
 
-For the strength coefficient, the best result is obtained at strength $=1$; smaller values keep too many risky clients, while larger values over-prune the pool.
-For the first-round epoch budget, 10 epochs give the most useful filtering indicators: too few epochs produce weak entropy estimates, while too many epochs make even risky clients look too confident on the probing set and shrink the gap between good and bad clients.
-For $\eta$, the default range $[0.10,0.30]$ selects 20 clients and achieves the best accuracy; smaller ranges keep too many noisy clients, while larger ranges are too strict.
+For the strength coefficient, the best result is obtained at strength $=1$; weaker filtering leaves the admission gate too open and retains risky clients, while stronger filtering becomes too aggressive and removes useful ones.
+For the first-round epoch budget, 10 epochs give the clearest filtering signal: shorter runs underfit the entropy estimate, while longer runs let even risky clients adapt too much to the probing set and blur the gap between reliable and risky clients.
+For $\eta$, the default range $[0.10,0.30]$ selects 20 clients and achieves the best accuracy; a narrower range is too permissive and lets noisy clients slip through, while a wider range is too restrictive and drops useful clients.
 Additional client-pool-size curves are provided in the supplementary material.
 
 \paragraph{\textbf{Probing-set sensitivity}}
