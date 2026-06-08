@@ -29,11 +29,11 @@
 
 \title{FedOCR: Outlier Client Removal in Federated Learning}
 
-\author{\IEEEauthorblockN{Jianhua Mao\IEEEauthorrefmark{2}, Junqing Yin\IEEEauthorrefmark{2}, Wei Xi\IEEEauthorrefmark{2}, Hanlin Gu\IEEEauthorrefmark{4}, Lixin Fan\IEEEauthorrefmark{4}\textsuperscript{*}}
+\author{\IEEEauthorblockN{Jianhua Mao\IEEEauthorrefmark{2}, Junqing Yin\IEEEauthorrefmark{2}, Wei Xi\IEEEauthorrefmark{2}\textsuperscript{$\dag$}, Hanlin Gu\IEEEauthorrefmark{4}, Lixin Fan\IEEEauthorrefmark{4}\textsuperscript{*}}
 \IEEEauthorblockA{\IEEEauthorrefmark{2}\textit{National Key Laboratory of Human-Machine Hybrid Augmented Intelligence, Xi'an Jiaotong University, China}\\
 \IEEEauthorrefmark{4}\textit{WeBank, China}\\
 \{maojianhua, yin\}@stu.xjtu.edu.cn \quad xiwei@xjtu.edu.cn \quad \{ghltsl123, linxi.fan01\}@gmail.com}
-\thanks{\textsuperscript{*} Corresponding author: Lixin Fan (linxi.fan01@gmail.com).}
+\thanks{\textsuperscript{*} Corresponding author: Lixin Fan (linxi.fan01@gmail.com). \textsuperscript{$\dag$} Co-corresponding author: Wei Xi (xiwei@xjtu.edu.cn).}
 }
 
 \maketitle
@@ -895,7 +895,7 @@ This means the theory is not just abstract: it ranks the oracle retained sets in
 
 \subsection{Main experiments}
 \label{subsec:exp_setup}
-In this section, we revisit the controlled oracle experiment above to validate our theoretical analysis. We then evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.	
+In this section, we evaluate FedOCR on three benchmark datasets under heterogeneous label-noise and Non-IID settings, comparing it with representative noisy-label FL and client-selection baselines, and further studying its efficiency, sensitivity, and ablation behavior.	
 \paragraph{\textbf{Experimental setup}}
 We evaluate FedOCR on MedMNIST~\cite{yang2023medmnist} and CIFAR-10/100~\cite{krizhevsky2009learning}. 
 Unless otherwise specified, the training data are distributed over $N=50$ clients. 
