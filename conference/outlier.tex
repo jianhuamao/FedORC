@@ -1042,7 +1042,7 @@ That means label quality is not a real requirement here, which makes the probing
 To understand why FedOCR improves robustness, we analyze the class-wise sample mass and noise rate of the retained client sets.
 Figure~\ref{fig:subset_composition_main} shows the retained pools under linear heterogeneous noise.
 FedOCR keeps the cleanest pool among the compared methods and still spreads mass across classes.
-RS and Fixed keep broader pools, but they also keep more noisy mass.
+RS keeps a broader pool, but it also keeps more noisy mass. Fixed is the oracle comparator obtained with access to the true target distribution, so it serves as a theoretical upper-bound reference rather than a deployable selection rule.
 EMD, PoC, and GS do not solve this trade-off either: they can improve coverage, but they still retain many noisy classes.
 So the figure says the same thing as the accuracy table: FedOCR keeps clients that are both cleaner and more balanced.
 
