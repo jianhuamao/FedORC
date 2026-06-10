@@ -1,2 +1,11 @@
 conference/
 FedOCR/supplementary_material.tex
+FedOCR/**/*.py
+FedOCR/**/*.pyc
+FedOCR/**/__pycache__/
+FedOCR/**/*.sh
+FedOCR/lib/
+FedOCR/train_exp/
+FedOCR/MS_environment.yml
+FedOCR/oracle/
+FedOCR/result/
